@@ -1,0 +1,9 @@
+{
+  "name": "playground",
+  "scripts": {
+    "dev": "vite"
+  },
+  "devDependencies": {
+    "vite": "^6.1.0"
+  }
+}
