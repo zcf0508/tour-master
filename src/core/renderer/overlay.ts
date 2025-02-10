@@ -141,3 +141,108 @@ export function refreshOverlay(): void {
     }
   }
 }
+
+function interpolateStages(fromStages: StageDefinition[], toStages: StageDefinition[], progress: number): StageDefinition[] {
+  const maxLength = Math.max(fromStages.length, toStages.length);
+  const result: StageDefinition[] = [];
+
+  for (let i = 0; i < maxLength; i++) {
+    const fromStage = fromStages[i] || toStages[i];
+    const toStage = toStages[i] || fromStages[i];
+
+    // If stage is being removed (exists in fromStages but not in toStages)
+    // we'll fade it out by reducing its size
+    if (!toStages[i] && fromStages[i]) {
+      const scale = 1 - progress;
+      result.push({
+        x: fromStage.x + (fromStage.width * (1 - scale)) / 2,
+        y: fromStage.y + (fromStage.height * (1 - scale)) / 2,
+        width: fromStage.width * scale,
+        height: fromStage.height * scale,
+        padding: (fromStage.padding || 0) * scale,
+        radius: fromStage.radius,
+      });
+      continue;
+    }
+
+    // If stage is being added (exists in toStages but not in fromStages)
+    // we'll fade it in by increasing its size
+    if (!fromStages[i] && toStages[i]) {
+      const scale = progress;
+      result.push({
+        x: toStage.x + (toStage.width * (1 - scale)) / 2,
+        y: toStage.y + (toStage.height * (1 - scale)) / 2,
+        width: toStage.width * scale,
+        height: toStage.height * scale,
+        padding: (toStage.padding || 0) * scale,
+        radius: toStage.radius,
+      });
+      continue;
+    }
+
+    // For stages that exist in both states, interpolate their properties
+    result.push({
+      x: fromStage.x + (toStage.x - fromStage.x) * progress,
+      y: fromStage.y + (toStage.y - fromStage.y) * progress,
+      width: fromStage.width + (toStage.width - fromStage.width) * progress,
+      height: fromStage.height + (toStage.height - fromStage.height) * progress,
+      padding: ((fromStage.padding || 0) + ((toStage.padding || 0) - (fromStage.padding || 0)) * progress),
+      radius: (fromStage.radius || 0) + ((toStage.radius || 0) - (fromStage.radius || 0)) * progress,
+    });
+  }
+
+  return result;
+}
+
+export function transitionStage(newStages: StageDefinition[], options?: Partial<{
+  /**
+   * This will become the default value for all stages.
+   */
+  stagePadding: number
+  /**
+   * This will become the default value for all stages.
+   */
+  stageRadius: number
+}>): void {
+  const state = useGlobalState();
+  if (!state.overlayDom.value || !state.currentStages.value) { return; }
+
+  const startStages = state.currentStages.value;
+  const overlaySvg = state.overlayDom.value;
+  const duration = 300; // Animation duration in milliseconds
+  const startTime = performance.now();
+
+  const processedNewStages = newStages.map(
+    stage => ({
+      ...stage,
+      padding: stage.padding ?? options?.stagePadding,
+      radius: stage.radius ?? options?.stageRadius,
+    }),
+  );
+
+  function animate(currentTime: number): void {
+    const elapsed = currentTime - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+
+    // Use easeInOutCubic easing function for smooth animation
+    const eased = progress < 0.5
+      ? 4 * progress * progress * progress
+      : 1 - (-2 * progress + 2) ** 3 / 2;
+
+    const interpolatedStages = interpolateStages(startStages, processedNewStages, eased);
+
+    overlaySvg.children[0].setAttribute(
+      'd',
+      generateStageSvgPathString(interpolatedStages),
+    );
+
+    if (progress < 1) {
+      requestAnimationFrame(animate);
+    }
+    else {
+      state.currentStages.value = processedNewStages;
+    }
+  }
+
+  requestAnimationFrame(animate);
+}
