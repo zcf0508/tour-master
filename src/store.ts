@@ -1,4 +1,5 @@
 import type { StageDefinition } from './core/renderer/overlay';
+import type { showPopover } from './core/renderer/popover';
 import { ref } from '@vue/reactivity';
 import { createGlobalState, useEventListener } from '@vueuse/core';
 import { refreshOverlay } from './core/renderer/overlay';
@@ -11,9 +12,12 @@ const createStore = createGlobalState(() => {
     refreshOverlay();
   });
 
+  const tooltip = ref<ReturnType<typeof showPopover>>();
+
   return {
     overlayDom,
     currentStages,
+    tooltip,
   };
 });
 

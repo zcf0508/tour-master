@@ -1,0 +1,104 @@
+import { toValue } from '@vue/reactivity';
+import { showStep } from '../renderer';
+
+interface TourStep {
+  element: string | HTMLElement | (() => HTMLElement)
+}
+
+interface TourConfig<T = undefined> {
+  steps: Array<TourStep & T>
+  tooltipTemplate: (
+    pre: () => void,
+    next: () => void,
+    finish: () => void,
+    currentStep: TourStep & T,
+    currentStepIndex: number,
+  ) => (T extends undefined ? (() => HTMLElement) : ((options: T) => HTMLElement))
+}
+
+export class Tour<T extends Record<string, unknown> | undefined = undefined> {
+  private config: TourConfig<T>;
+  private stepIndex: number;
+  private destroy?: () => void;
+
+  constructor(_config: TourConfig<T>) {
+    this.config = _config;
+    this.stepIndex = 0;
+  }
+
+  private showStep(index: number): void {
+    if (index >= this.config.steps.length) {
+      return this.handelFinish();
+    }
+
+    if (index < 0 || index > this.config.steps.length - 1) {
+      return;
+    }
+
+    this.stepIndex = index;
+    const currentStep = this.config.steps[this.stepIndex];
+    const referenceEl = toValue((() => {
+      const ele = currentStep.element;
+      if (typeof ele === 'string') {
+        return document.getElementById(ele) as HTMLElement;
+      }
+      else {
+        return ele;
+      }
+    })());
+
+    const [destoryOverlay, destoryTooltip] = showStep(
+      referenceEl,
+      () => {
+        const handelPre = this.handelPre.bind(this);
+        const handelNext = this.handelNext.bind(this);
+        const handelFinish = this.handelFinish.bind(this);
+
+        const createTooltipEl = this.config.tooltipTemplate(
+          handelPre,
+          handelNext,
+          handelFinish,
+          currentStep,
+          index,
+        );
+        return createTooltipEl(currentStep);
+      },
+      () => {
+        const referenceElRect = referenceEl.getBoundingClientRect();
+
+        return [
+          {
+            x: referenceElRect.left,
+            y: referenceElRect.top,
+            width: referenceElRect.width,
+            height: referenceElRect.height,
+          },
+        ];
+      },
+    );
+
+    this.destroy = () => {
+      destoryOverlay();
+      destoryTooltip();
+    };
+  }
+
+  private handelNext(): void {
+    this.showStep(this.stepIndex + 1);
+  }
+
+  private handelPre(): void {
+    this.showStep(this.stepIndex - 1);
+  }
+
+  private handelFinish(): void {
+    this.destroy?.();
+    this.destroy = undefined;
+
+    this.stepIndex = 0;
+  }
+
+  public start(): void {
+    this.showStep(0);
+  }
+}

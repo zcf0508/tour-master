@@ -39,16 +39,26 @@ export function showPopover(
   options?: Partial<{
     placement?: Placement
   }>,
-): () => void {
+): [HTMLElement, () => void] {
   const {
     placement = 'bottom',
   } = options || {};
 
   const tooltipEl = createTooltipEl();
 
-  return autoUpdate(
+  const cleanup = autoUpdate(
     unref(referenceEl),
     unref(tooltipEl),
     () => updatePosition(referenceEl, tooltipEl, placement),
   );
+
+  function destory(): void {
+    cleanup();
+    unref(tooltipEl).remove();
+  }
+
+  return [
+    unref(tooltipEl),
+    destory,
+  ];
 }

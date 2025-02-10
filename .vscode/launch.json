@@ -1,0 +1,21 @@
+{
+  // https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "dev-in-chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}",
+      "sourceMaps": true,
+      "runtimeArgs": [
+        "--disable-site-isolation-trials",
+        "--disable-web-security",
+        "--allow-insecure-localhost",
+        "--ignore-certificate-errors",
+        "--remote-debugging-port=9232"
+      ]
+    }
+  ]
+}
