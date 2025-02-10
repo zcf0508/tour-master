@@ -28,6 +28,7 @@ export default antfu(
             ignoreComments: true,
             ignoreStrings: true,
             ignoreUrls: true,
+            ignoreTemplateLiterals: true,
           },
         ],
         'style/comma-dangle': ['error', 'always-multiline'],

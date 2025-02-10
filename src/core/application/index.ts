@@ -23,8 +23,8 @@ export class TourScheduler<
   /** start the next tour */
   public startTour(): void {
     const nextTourName = this.config.stateHandler();
-    if(!nextTourName) {
-      return
+    if (!nextTourName) {
+      return;
     }
 
     const nextTour = this.config.tours.get(nextTourName);

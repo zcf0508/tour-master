@@ -146,7 +146,11 @@ export function refreshOverlay(): void {
   }
 }
 
-function interpolateStages(fromStages: StageDefinition[], toStages: StageDefinition[], progress: number): StageDefinition[] {
+function interpolateStages(
+  fromStages: StageDefinition[],
+  toStages: StageDefinition[],
+  progress: number,
+): StageDefinition[] {
   const maxLength = Math.max(fromStages.length, toStages.length);
   const result: StageDefinition[] = [];
 
