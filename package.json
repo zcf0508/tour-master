@@ -1,17 +1,17 @@
 {
-  "name": "pkg-placeholder",
+  "name": "tour-master",
   "type": "module",
   "version": "0.0.0",
-  "description": "_description_",
-  "author": "Anthony Fu <anthonyfu117@hotmail.com>",
+  "description": "Your next tour library.",
+  "author": "zcf0508 <zcf0508@live.com>",
   "license": "MIT",
-  "funding": "https://github.com/sponsors/antfu",
-  "homepage": "https://github.com/antfu/pkg-placeholder#readme",
+  "funding": "https://github.com/sponsors/zcf0508",
+  "homepage": "https://github.com/zcf0508/tour-master#readme",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/antfu/pkg-placeholder.git"
+    "url": "git+https://github.com/zcf0508/tour-master.git"
   },
-  "bugs": "https://github.com/antfu/pkg-placeholder/issues",
+  "bugs": "https://github.com/zcf0508/tour-master/issues",
   "keywords": [],
   "sideEffects": false,
   "exports": {

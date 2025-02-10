@@ -1,37 +1,133 @@
-# pkg-placeholder
+# Tour Master
 
-[![npm version][npm-version-src]][npm-version-href]
-[![npm downloads][npm-downloads-src]][npm-downloads-href]
-[![bundle][bundle-src]][bundle-href]
-[![JSDocs][jsdocs-src]][jsdocs-href]
-[![License][license-src]][license-href]
+A flexible and customizable tour guide library for web applications.
 
-_description_
+## Features
 
-> **Note**:
-> Replace `pkg-placeholder`, `_description_` and `antfu` globally to use this template.
+- Support for multiple sequential tours
+- Customizable tooltip templates and styling
+- Configurable step navigation and positioning
+- TypeScript support
 
-## Sponsors
+## Installation
 
-<p align="center">
-  <a href="https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg">
-    <img src='https://cdn.jsdelivr.net/gh/antfu/static/sponsors.svg'/>
-  </a>
-</p>
+```bash
+npm install tour-master
+```
+
+## Basic Usage
+
+```typescript
+import { Tour } from 'tour-master';
+
+// Create tour instances
+const tour = new Tour<{ message: string }>({
+  steps: [
+    {
+      element: document.getElementById('step1'),
+      message: 'This is step 1',
+    },
+    {
+      element: document.getElementById('step2'),
+      message: 'This is step 2',
+    },
+  ],
+});
+
+tour.start();
+```
+
+## Tour Configuration
+
+### Step Options
+
+```typescript
+interface TourStep {
+  element: string | HTMLElement | (() => HTMLElement)
+  entry?: (action: 'pre' | 'next') => void | Promise<void>
+  leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
+  placement?: Placement
+}
+```
+
+### Custom Tooltip Template
+
+#### Vanilla JS
+```typescript
+tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+  return () => {
+    const tooltipEl = document.createElement('div');
+    tooltipEl.innerHTML = `
+      <div>${currentStep.message}</div>
+      <div>
+        <button data-action="pre">Previous</button>
+        <button data-action="next">Next</button>
+        <button data-action="finish">Finish</button>
+      </div>
+    `;
+
+    document.body.appendChild(tooltipEl);
+
+    return tooltipEl;
+  };
+};
+```
+
+#### vue
+```typescript
+import { defineComponent, h } from 'vue';
+
+tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+  return () => {
+    const tooltipComponent = defineComponent({
+      render() {
+        return h('div', [
+          h('div', currentStep.message),
+          h('div', [
+            h('button', { onClick: pre }, 'Previous'),
+            h('button', { onClick: next }, 'Next'),
+            h('button', { onClick: finish }, 'Finish'),
+          ]),
+        ]);
+      },
+    });
+
+    const tooltipEl = document.createElement('div');
+    const tooltipApp = createApp(tooltipComponent);
+    tooltipApp.mount(tooltipEl);
+
+    document.body.appendChild(tooltipEl);
+
+    return tooltipEl;
+  };
+};
+```
+
+## Multiple Tours
+
+You can chain multiple tours together:
+
+```typescript
+const tourScheduler = new TourScheduler({
+  tours: new Map([
+    ['tour1', tour1],
+    ['tour2', tour2],
+  ]),
+  stateHandler() {
+    // Logic to determine which tour to show
+    return 'tour1'; // or 'tour2'
+  },
+});
+```
+
+## Examples
+
+Check the `playground` directory in the repository for complete working examples including:
+
+- Multiple sequential tours
+- Custom tooltip styling
+- Tour transitions
 
 ## License
 
-[MIT](./LICENSE) License © [Anthony Fu](https://github.com/antfu)
-
-<!-- Badges -->
-
-[npm-version-src]: https://img.shields.io/npm/v/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-version-href]: https://npmjs.com/package/pkg-placeholder
-[npm-downloads-src]: https://img.shields.io/npm/dm/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669
-[npm-downloads-href]: https://npmjs.com/package/pkg-placeholder
-[bundle-src]: https://img.shields.io/bundlephobia/minzip/pkg-placeholder?style=flat&colorA=080f12&colorB=1fa669&label=minzip
-[bundle-href]: https://bundlephobia.com/result?p=pkg-placeholder
-[license-src]: https://img.shields.io/github/license/antfu/pkg-placeholder.svg?style=flat&colorA=080f12&colorB=1fa669
-[license-href]: https://github.com/antfu/pkg-placeholder/blob/main/LICENSE
-[jsdocs-src]: https://img.shields.io/badge/jsdocs-reference-080f12?style=flat&colorA=080f12&colorB=1fa669
-[jsdocs-href]: https://www.jsdocs.io/package/pkg-placeholder
+MIT
