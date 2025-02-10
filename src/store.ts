@@ -1,14 +1,14 @@
 import type { StageDefinition } from './core/renderer/overlay';
 import type { showPopover } from './core/renderer/popover';
 import { ref } from '@vue/reactivity';
-import { createGlobalState, useEventListener } from '@vueuse/core';
+import { createGlobalState } from '@vueuse/shared';
 import { refreshOverlay } from './core/renderer/overlay';
 
 const createStore = createGlobalState(() => {
   const overlayDom = ref<SVGSVGElement>();
   const currentStages = ref<StageDefinition[]>();
 
-  useEventListener(window, 'resize', () => {
+  window.addEventListener('resize', () => {
     refreshOverlay();
   });
 

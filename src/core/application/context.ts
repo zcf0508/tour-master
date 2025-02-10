@@ -1,5 +1,5 @@
 import { ref } from '@vue/reactivity';
-import { createGlobalState } from '@vueuse/core';
+import { createGlobalState } from '@vueuse/shared';
 
 const createContext = createGlobalState(() => {
   const context = ref<Map<string, unknown>>(new Map());
