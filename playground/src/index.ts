@@ -10,10 +10,22 @@ const tour = new Tour<{
     {
       element: step1,
       message: 'This tooltip is for step 1',
+      entry: (action) => {
+        console.log('entry step 1', action);
+      },
+      leave: (action) => {
+        console.log('leave step 1', action);
+      },
     },
     {
       element: step2,
       message: 'This tooltip is for step 2',
+      entry: (action) => {
+        console.log('entry step 2', action);
+      },
+      leave: (action) => {
+        console.log('leave step 2', action);
+      },
     },
   ],
   tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {

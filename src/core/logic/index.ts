@@ -3,6 +3,8 @@ import { showStep } from '../renderer';
 
 interface TourStep {
   element: string | HTMLElement | (() => HTMLElement)
+  entry?: (action: 'pre' | 'next') => void | Promise<void>
+  leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
 }
 
 interface TourConfig<T = undefined> {
@@ -23,10 +25,14 @@ export class Tour<T extends Record<string, unknown> | undefined = undefined> {
 
   constructor(_config: TourConfig<T>) {
     this.config = _config;
-    this.stepIndex = 0;
+    this.stepIndex = -1;
   }
 
-  private showStep(index: number): void {
+  private get currentStep(): TourStep & T {
+    return this.config.steps[this.stepIndex];
+  }
+
+  private async showStep(index: number, action: 'pre' | 'next'): Promise<void> {
     if (index >= this.config.steps.length) {
       return this.handelFinish();
     }
@@ -35,10 +41,14 @@ export class Tour<T extends Record<string, unknown> | undefined = undefined> {
       return;
     }
 
+    const lastStep = this.config.steps[this.stepIndex] as TourStep & T | undefined;
+
+    await lastStep?.leave?.(action);
+
     this.stepIndex = index;
-    const currentStep = this.config.steps[this.stepIndex];
+
     const referenceEl = toValue((() => {
-      const ele = currentStep.element;
+      const ele = this.currentStep.element;
       if (typeof ele === 'string') {
         return document.getElementById(ele) as HTMLElement;
       }
@@ -47,12 +57,15 @@ export class Tour<T extends Record<string, unknown> | undefined = undefined> {
       }
     })());
 
-    const [destoryOverlay, destoryTooltip] = showStep(
+    await this.currentStep.entry?.(action);
+
+    const [destoryOverlay, destoryTooltip] = await showStep(
       referenceEl,
       () => {
         const handelPre = this.handelPre.bind(this);
         const handelNext = this.handelNext.bind(this);
         const handelFinish = this.handelFinish.bind(this);
+        const currentStep = this.currentStep;
 
         const createTooltipEl = this.config.tooltipTemplate(
           handelPre,
@@ -84,21 +97,22 @@ export class Tour<T extends Record<string, unknown> | undefined = undefined> {
   }
 
   private handelNext(): void {
-    this.showStep(this.stepIndex + 1);
+    this.showStep(this.stepIndex + 1, 'next');
   }
 
   private handelPre(): void {
-    this.showStep(this.stepIndex - 1);
+    this.showStep(this.stepIndex - 1, 'pre');
   }
 
-  private handelFinish(): void {
+  private async handelFinish(): Promise<void> {
     this.destroy?.();
     this.destroy = undefined;
 
-    this.stepIndex = 0;
+    await this.currentStep.leave?.('finish');
+    this.stepIndex = -1;
   }
 
   public start(): void {
-    this.showStep(0);
+    this.showStep(0, 'next');
   }
 }

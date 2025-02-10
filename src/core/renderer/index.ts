@@ -5,12 +5,27 @@ import { useGlobalState } from '../../store';
 import { createOverlaySvg, transitionStage } from './overlay';
 import { showPopover } from './popover';
 
-export function showStep(
+export async function showStep(
   referenceEl: MaybeRef<HTMLElement>,
   createTooltipEl: () => MaybeRef<HTMLElement>,
   stages: StageDefinition[] | (() => StageDefinition[]),
-): [() => void, () => void] {
+): Promise<[() => void, () => void]> {
   const state = useGlobalState();
+
+  // ---
+
+  if (state.tooltip.value) {
+    state.tooltip.value[1]();
+  }
+
+  const [tooltipEle, destoryTooltip] = showPopover(
+    referenceEl,
+    createTooltipEl,
+  );
+
+  state.tooltip.value = [tooltipEle, destoryTooltip];
+
+  // ---
 
   if (!state.overlayDom.value) {
     const overlaySvg = createOverlaySvg(
@@ -26,7 +41,7 @@ export function showStep(
     state.overlayDom.value = overlaySvg;
   }
   else {
-    transitionStage(
+    await transitionStage(
       toValue(stages),
       {
         stagePadding: 4,
@@ -39,17 +54,6 @@ export function showStep(
     state.overlayDom.value?.remove();
     state.overlayDom.value = undefined;
   };
-
-  if (state.tooltip.value) {
-    state.tooltip.value[1]();
-  }
-
-  const [tooltipEle, destoryTooltip] = showPopover(
-    referenceEl,
-    createTooltipEl,
-  );
-
-  state.tooltip.value = [tooltipEle, destoryTooltip];
 
   return [
     destoryOverlay,
