@@ -1,5 +1,7 @@
 # Tour Master
 
+[![NPM version](https://img.shields.io/npm/v/tour-master?color=a1b858&label=)](https://www.npmjs.com/package/tour-master)
+
 A flexible and customizable tour guide library for web applications.
 
 ## Features
