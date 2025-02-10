@@ -29,7 +29,7 @@
     "lint": "eslint .",
     "format": "eslint . --fix",
     "prepublishOnly": "pnpm run build",
-    "release": "bumpp && pnpm publish",
+    "release": "bumpp",
     "start": "tsx src/index.ts",
     "test": "vitest",
     "typecheck": "tsc --noEmit"
