@@ -7,15 +7,17 @@ interface TourStep {
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
 }
 
+export type TooltipTemplate<T> = (
+  pre: () => void,
+  next: () => void,
+  finish: () => void,
+  currentStep: TourStep & T,
+  currentStepIndex: number,
+) => (T extends undefined ? (() => HTMLElement) : ((options: T) => HTMLElement));
+
 interface TourConfig<T = undefined> {
   steps: Array<TourStep & T>
-  tooltipTemplate: (
-    pre: () => void,
-    next: () => void,
-    finish: () => void,
-    currentStep: TourStep & T,
-    currentStepIndex: number,
-  ) => (T extends undefined ? (() => HTMLElement) : ((options: T) => HTMLElement))
+  tooltipTemplate: TooltipTemplate<T>
 }
 
 export class Tour<T extends Record<string, unknown> | undefined = undefined> {
@@ -34,7 +36,7 @@ export class Tour<T extends Record<string, unknown> | undefined = undefined> {
 
   private async showStep(index: number, action: 'pre' | 'next'): Promise<void> {
     if (index >= this.config.steps.length) {
-      return this.handelFinish();
+      return await this.handelFinish();
     }
 
     if (index < 0 || index > this.config.steps.length - 1) {
@@ -96,12 +98,12 @@ export class Tour<T extends Record<string, unknown> | undefined = undefined> {
     };
   }
 
-  private handelNext(): void {
-    this.showStep(this.stepIndex + 1, 'next');
+  private async handelNext(): Promise<void> {
+    await this.showStep(this.stepIndex + 1, 'next');
   }
 
-  private handelPre(): void {
-    this.showStep(this.stepIndex - 1, 'pre');
+  private async handelPre(): Promise<void> {
+    await this.showStep(this.stepIndex - 1, 'pre');
   }
 
   private async handelFinish(): Promise<void> {
@@ -112,7 +114,7 @@ export class Tour<T extends Record<string, unknown> | undefined = undefined> {
     this.stepIndex = -1;
   }
 
-  public start(): void {
-    this.showStep(0, 'next');
+  public async start(): Promise<void> {
+    await this.showStep(0, 'next');
   }
 }
