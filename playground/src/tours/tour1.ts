@@ -1,7 +1,7 @@
-import { tourScheduler } from "..";
-import { Tour } from "../../../src";
+import { tourScheduler } from '..';
+import { Tour } from '../../../src';
 
-export default function () {
+export default function (): Tour<{ message: string }> {
   const step11 = document.getElementById('step_1_1')!;
   const step12 = document.getElementById('step_1_2')!;
 
@@ -27,6 +27,7 @@ export default function () {
             tourScheduler.startTour();
           }
         },
+        placement: 'right',
       },
     ],
     tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {

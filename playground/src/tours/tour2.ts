@@ -1,6 +1,6 @@
-import { Tour } from "../../../src";
+import { Tour } from '../../../src';
 
-export default function () {
+export default function (): Tour<{ message: string }> {
   const step21 = document.getElementById('step_2_1')!;
   const step22 = document.getElementById('step_2_2')!;
 
@@ -28,7 +28,7 @@ export default function () {
       <button class="tooltip-btn" data-action="finish">Finish</button>
     </div>
   </div>`;
-  
+
         // Add event listeners after creating the buttons
         const buttons = tooltipEl.querySelectorAll('.tooltip-btn');
         Array.from(buttons).forEach((button, index) => {
@@ -50,7 +50,7 @@ export default function () {
             }
           });
         });
-  
+
         Object.assign(tooltipEl.style, {
           'position': 'absolute',
           'background': '#fff',
@@ -58,9 +58,9 @@ export default function () {
           'padding': '4px',
           'border-radius': '4px',
         });
-  
+
         document.body.appendChild(tooltipEl);
-  
+
         return tooltipEl;
       };
     },

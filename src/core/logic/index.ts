@@ -1,3 +1,4 @@
+import type { Placement } from '@floating-ui/dom';
 import { toValue } from '@vue/reactivity';
 import { showStep } from '../renderer';
 
@@ -5,6 +6,7 @@ interface TourStep {
   element: string | HTMLElement | (() => HTMLElement)
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
+  placement?: Placement
 }
 
 export type TooltipTemplate<T> = (
@@ -89,6 +91,9 @@ export class Tour<T extends Record<string, unknown> | undefined> {
             height: referenceElRect.height,
           },
         ];
+      },
+      {
+        placement: this.currentStep.placement,
       },
     );
 

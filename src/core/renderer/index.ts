@@ -1,3 +1,4 @@
+import type { Placement } from '@floating-ui/dom';
 import type { MaybeRef } from '@vue/reactivity';
 import type { StageDefinition } from './overlay';
 import { toValue } from '@vue/reactivity';
@@ -8,7 +9,10 @@ import { showPopover } from './popover';
 export async function showStep(
   referenceEl: MaybeRef<HTMLElement>,
   createPopoverEl: () => MaybeRef<HTMLElement>,
-  stages: StageDefinition[] | (() => StageDefinition[]),  
+  stages: StageDefinition[] | (() => StageDefinition[]),
+  options?: Partial<{
+    placement: Placement
+  }>,
 ): Promise<[() => void, () => void]> {
   const state = useGlobalState();
 
@@ -21,6 +25,7 @@ export async function showStep(
   const [popoverEl, destoryTooltip] = showPopover(
     referenceEl,
     createPopoverEl,
+    options,
   );
 
   state.popoverContext.value = [popoverEl, destoryTooltip];
