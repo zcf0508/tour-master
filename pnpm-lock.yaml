@@ -8,6 +8,12 @@ importers:
 
   .:
     dependencies:
+      '@floating-ui/dom':
+        specifier: ^1.6.13
+        version: 1.6.13
+      '@vue/reactivity':
+        specifier: ^3.5.13
+        version: 3.5.13
       jsdom:
         specifier: ^26.0.0
         version: 26.0.0
@@ -21,18 +27,12 @@ importers:
       '@antfu/utils':
         specifier: ^8.1.0
         version: 8.1.0
-      '@floating-ui/dom':
-        specifier: ^1.6.13
-        version: 1.6.13
       '@types/lodash-es':
         specifier: ^4.17.12
         version: 4.17.12
       '@types/node':
         specifier: ^22.13.1
         version: 22.13.1
-      '@vue/reactivity':
-        specifier: ^3.5.13
-        version: 3.5.13
       '@vueuse/core':
         specifier: ^12.5.0
         version: 12.5.0(typescript@5.7.3)

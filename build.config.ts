@@ -6,4 +6,6 @@ export default defineBuildConfig({
   ],
   declaration: true,
   clean: true,
+  externals: ['@vue/reactivity', '@floating-ui/dom'],
+  failOnWarn: false,
 });
