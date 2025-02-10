@@ -6,7 +6,7 @@ import { refreshOverlay } from './core/renderer/overlay';
 
 const createStore = createGlobalState(() => {
   const overlayDom = ref<SVGSVGElement>();
-  const currentStages = ref<StageDefinition[]>([]);
+  const currentStages = ref<StageDefinition[]>();
 
   useEventListener(window, 'resize', () => {
     refreshOverlay();
