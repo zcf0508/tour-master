@@ -1,9 +1,11 @@
 import type { Placement } from '@floating-ui/dom';
+import type { StageDefinition } from '../renderer/overlay';
 import { toValue } from '@vue/reactivity';
 import { showStep } from '../renderer';
 
 interface TourStep {
   element: string | HTMLElement | (() => HTMLElement)
+  stages: StageDefinition[] | (() => StageDefinition[])
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
   placement?: Placement
@@ -80,18 +82,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
         );
         return createTooltipEl(currentStep);
       },
-      () => {
-        const referenceElRect = referenceEl.getBoundingClientRect();
-
-        return [
-          {
-            x: referenceElRect.left,
-            y: referenceElRect.top,
-            width: referenceElRect.width,
-            height: referenceElRect.height,
-          },
-        ];
-      },
+      this.currentStep.stages,
       {
         placement: this.currentStep.placement,
       },

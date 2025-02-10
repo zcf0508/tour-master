@@ -10,10 +10,28 @@ export default function (): Tour<{ message: string }> {
     steps: [
       {
         element: step21,
+        stages: () => {
+          const rect = step21.getBoundingClientRect();
+          return [{
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+          }];
+        },
         message: 'This tooltip is for step 1',
       },
       {
         element: step22,
+        stages: () => {
+          const rect = step22.getBoundingClientRect();
+          return [{
+            x: rect.x,
+            y: rect.y,
+            width: rect.width,
+            height: rect.height,
+          }];
+        },
         message: 'This tooltip is for step 2',
       },
     ],

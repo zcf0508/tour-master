@@ -1,4 +1,5 @@
 import type { TooltipTemplate } from '../../src/core/logic';
+import { toValue } from '@vue/reactivity';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Tour } from '../../src/core/logic';
 
@@ -31,7 +32,18 @@ describe('tour', () => {
 
     const tour = new Tour({
       steps: [
-        { element },
+        {
+          element,
+          stages: () => {
+            const rect = element.getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
+        },
       ],
       tooltipTemplate: mockTooltipTemplate,
     });
@@ -45,7 +57,18 @@ describe('tour', () => {
 
     const tour = new Tour({
       steps: [
-        { element },
+        {
+          element,
+          stages: () => {
+            const rect = toValue(element).getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
+        },
       ],
       tooltipTemplate: mockTooltipTemplate,
     });
@@ -65,11 +88,29 @@ describe('tour', () => {
       steps: [
         {
           element: 'step1',
+          stages: () => {
+            const rect = document.getElementById('step1')!.getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
           entry: mockEntry1,
           leave: mockLeave1,
         },
         {
           element: 'step2',
+          stages: () => {
+            const rect = document.getElementById('step2')!.getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
           entry: mockEntry2,
           leave: mockLeave2,
         },
@@ -102,6 +143,15 @@ describe('tour', () => {
       steps: [
         {
           element: 'step1',
+          stages: () => {
+            const rect = document.getElementById('step1')!.getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
           leave: mockLeave,
         },
       ],
