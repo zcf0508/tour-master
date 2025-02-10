@@ -7,23 +7,23 @@ import { showPopover } from './popover';
 
 export async function showStep(
   referenceEl: MaybeRef<HTMLElement>,
-  createTooltipEl: () => MaybeRef<HTMLElement>,
-  stages: StageDefinition[] | (() => StageDefinition[]),
+  createPopoverEl: () => MaybeRef<HTMLElement>,
+  stages: StageDefinition[] | (() => StageDefinition[]),  
 ): Promise<[() => void, () => void]> {
   const state = useGlobalState();
 
   // ---
 
-  if (state.tooltip.value) {
-    state.tooltip.value[1]();
+  if (state.popoverContext.value) {
+    state.popoverContext.value[1]();
   }
 
-  const [tooltipEle, destoryTooltip] = showPopover(
+  const [popoverEl, destoryTooltip] = showPopover(
     referenceEl,
-    createTooltipEl,
+    createPopoverEl,
   );
 
-  state.tooltip.value = [tooltipEle, destoryTooltip];
+  state.popoverContext.value = [popoverEl, destoryTooltip];
 
   // ---
 

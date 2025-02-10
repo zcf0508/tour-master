@@ -7,7 +7,7 @@ afterAll(() => {
 
   state.overlayDom.value = undefined;
   state.currentStages.value = undefined;
-  state.tooltip.value = undefined;
+  state.popoverContext.value = undefined;
 });
 
 describe('overlay', () => {

@@ -13,7 +13,7 @@ export type TooltipTemplate<T> = (
   finish: () => void,
   currentStep: TourStep & T,
   currentStepIndex: number,
-) => (T extends undefined ? (() => HTMLElement) : ((options: T) => HTMLElement));
+) => (T extends undefined ? (() => HTMLElement) : ((data: T) => HTMLElement));
 
 interface TourConfig<T = undefined> {
   steps: Array<TourStep & T>

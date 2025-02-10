@@ -12,12 +12,12 @@ const createStore = createGlobalState(() => {
     refreshOverlay();
   });
 
-  const tooltip = ref<ReturnType<typeof showPopover>>();
+  const popoverContext = ref<ReturnType<typeof showPopover>>();
 
   return {
     overlayDom,
     currentStages,
-    tooltip,
+    popoverContext,
   };
 });
 
