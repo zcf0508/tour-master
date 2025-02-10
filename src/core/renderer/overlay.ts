@@ -1,3 +1,5 @@
+import { useGlobalState } from '../../store';
+
 export interface StageDefinition {
   x: number
   y: number
@@ -69,6 +71,18 @@ export function createOverlaySvg(
     stageRadius = 0,
   } = options ?? {};
 
+  const state = useGlobalState();
+
+  const processedStages = stages.map(
+    stage => ({
+      ...stage,
+      padding: stage.padding ?? stagePadding,
+      radius: stage.radius ?? stageRadius,
+    }),
+  );
+
+  state.currentStages.value = processedStages;
+
   const windowX = window.innerWidth;
   const windowY = window.innerHeight;
 
@@ -96,15 +110,7 @@ export function createOverlaySvg(
 
   stagePath.setAttribute(
     'd',
-    generateStageSvgPathString(
-      stages.map(
-        stage => ({
-          ...stage,
-          padding: stage.padding ?? stagePadding,
-          radius: stage.radius ?? stageRadius,
-        }),
-      ),
-    ),
+    generateStageSvgPathString(processedStages),
   );
 
   stagePath.style.fill = overlayColor;
@@ -115,4 +121,23 @@ export function createOverlaySvg(
   svg.appendChild(stagePath);
 
   return svg;
+}
+
+export function refreshOverlay(): void {
+  const state = useGlobalState();
+  if (state.overlayDom.value) {
+    const overlaySvg = state.overlayDom.value;
+
+    const windowX = window.innerWidth;
+    const windowY = window.innerHeight;
+
+    overlaySvg.setAttribute('viewBox', `0 0 ${windowX} ${windowY}`);
+
+    if (state.currentStages.value) {
+      overlaySvg.children[0].setAttribute(
+        'd',
+        generateStageSvgPathString(state.currentStages.value),
+      );
+    }
+  }
 }

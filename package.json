@@ -41,6 +41,7 @@
     "@floating-ui/dom": "^1.6.13",
     "@types/node": "^22.13.1",
     "@vue/reactivity": "^3.5.13",
+    "@vueuse/core": "^12.5.0",
     "bumpp": "^10.0.2",
     "eslint": "^9.20.0",
     "tsx": "^4.19.2",
