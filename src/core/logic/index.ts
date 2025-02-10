@@ -20,7 +20,7 @@ interface TourConfig<T = undefined> {
   tooltipTemplate: TooltipTemplate<T>
 }
 
-export class Tour<T extends Record<string, unknown> | undefined = undefined> {
+export class Tour<T extends Record<string, unknown> | undefined> {
   private config: TourConfig<T>;
   private stepIndex: number;
   private destroy?: () => void;

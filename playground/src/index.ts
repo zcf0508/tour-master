@@ -1,82 +1,22 @@
-import { Tour } from '../../src/core/logic';
+import { TourScheduler } from '../../src/';
+import createTour1 from './tours/tour1';
+import createTour2 from './tours/tour2';
 
-const step1 = document.getElementById('step_1')!;
-const step2 = document.getElementById('step_2')!;
+export const tourScheduler = new TourScheduler({
+  tours: new Map([
+    ['tour1', createTour1()],
+    ['tour2', createTour2()],
+  ]),
+  stateHandler() {
+    const showTour1 = localStorage.getItem('showTour1');
 
-const tour = new Tour<{
-  message: string
-}>({
-  steps: [
-    {
-      element: step1,
-      message: 'This tooltip is for step 1',
-      entry: (action) => {
-        console.log('entry step 1', action);
-      },
-      leave: (action) => {
-        console.log('leave step 1', action);
-      },
-    },
-    {
-      element: step2,
-      message: 'This tooltip is for step 2',
-      entry: (action) => {
-        console.log('entry step 2', action);
-      },
-      leave: (action) => {
-        console.log('leave step 2', action);
-      },
-    },
-  ],
-  tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
-    return () => {
-      const tooltipEl = document.createElement('div') as HTMLElement;
-      tooltipEl.innerHTML = `<div>
-  <div>${currentStep.message}</div>
-  <div>
-    <button class="tooltip-btn" data-action="pre">Pre</button>
-    <button class="tooltip-btn" data-action="next">Next</button>
-    <button class="tooltip-btn" data-action="finish">Finish</button>
-  </div>
-</div>`;
-
-      // Add event listeners after creating the buttons
-      const buttons = tooltipEl.querySelectorAll('.tooltip-btn');
-      Array.from(buttons).forEach((button, index) => {
-        if (currentStepIndex === 0 && index === 0) {
-          button.setAttribute('disabled', 'true');
-        }
-        button.addEventListener('click', (e) => {
-          const action = (e.target as HTMLElement).dataset.action;
-          switch (action) {
-            case 'pre':
-              pre();
-              break;
-            case 'next':
-              next();
-              break;
-            case 'finish':
-              finish();
-              break;
-          }
-        });
-      });
-
-      Object.assign(tooltipEl.style, {
-        'position': 'absolute',
-        'background': '#fff',
-        'z-index': 10001,
-        'padding': '4px',
-        'border-radius': '4px',
-      });
-
-      document.body.appendChild(tooltipEl);
-
-      return tooltipEl;
-    };
+    if (showTour1 !== 'false') {
+      return 'tour1';
+    }
+    else {
+      return 'tour2';
+    }
   },
 });
 
-step1.addEventListener('click', () => {
-  tour.start();
-});
+tourScheduler.startTour();
