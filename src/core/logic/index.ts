@@ -23,6 +23,8 @@ export type PopoverTemplate<T> = (
 interface TourConfig<T = undefined> {
   steps: Array<TourStep & T>
   popoverTemplate: PopoverTemplate<T>
+  zIndex?: number
+  overlayOpacity?: number
 }
 
 export class Tour<T extends Record<string, unknown> | undefined> {
@@ -98,6 +100,8 @@ export class Tour<T extends Record<string, unknown> | undefined> {
       }),
       {
         placement: this.currentStep.placement,
+        zIndex: this.config.zIndex,
+        overlayOpacity: this.config.overlayOpacity,
       },
     );
 

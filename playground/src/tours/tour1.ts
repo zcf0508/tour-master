@@ -77,5 +77,7 @@ export default function (): Tour<{ message: string }> {
         return tooltipEl;
       };
     },
+    zIndex: 200,
+    overlayOpacity: 0.75,
   });
 }

@@ -11,11 +11,13 @@ export async function showStep(
   createPopoverEl: () => MaybeRef<HTMLElement>,
   stages: StageDefinition[] | (() => StageDefinition[]),
   options?: Partial<{
+    overlayOpacity: number
     placement: Placement
     zIndex: number
   }>,
 ): Promise<[() => void, () => void]> {
   const {
+    overlayOpacity,
     placement = 'bottom',
     zIndex = 10000,
   } = options || {};
@@ -48,6 +50,7 @@ export async function showStep(
         stagePadding: 4,
         stageRadius: 4,
         zIndex,
+        overlayOpacity,
       },
     );
 
