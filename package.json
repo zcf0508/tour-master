@@ -36,8 +36,8 @@
   },
   "peerDependencies": {
     "@floating-ui/dom": "^1.6.13",
-    "@vue/reactivity": "^3.5.13",
-    "@vueuse/shared": "^12.5.0"
+    "@vue/reactivity": "^3.3.0",
+    "@vueuse/shared": "^9.2.0"
   },
   "dependencies": {
     "@antfu/eslint-config": "^4.1.1",
