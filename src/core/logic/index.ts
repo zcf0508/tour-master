@@ -17,6 +17,7 @@ export type TooltipTemplate<T> = (
   finish: () => void,
   currentStep: TourStep & T,
   currentStepIndex: number,
+  stepTotal: number,
 ) => (T extends undefined ? (() => HTMLElement) : ((data: T) => HTMLElement));
 
 interface TourConfig<T = undefined> {
@@ -72,13 +73,14 @@ export class Tour<T extends Record<string, unknown> | undefined> {
         const handelNext = this.handelNext.bind(this);
         const handelFinish = this.handelFinish.bind(this);
         const currentStep = this.currentStep;
-
+        const stepTotal = this.config.steps.length;
         const createTooltipEl = this.config.tooltipTemplate(
           handelPre,
           handelNext,
           handelFinish,
           currentStep,
           index,
+          stepTotal,
         );
         return createTooltipEl(currentStep);
       },
