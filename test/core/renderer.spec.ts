@@ -1,3 +1,4 @@
+import { toValue } from '@vue/reactivity';
 import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
 import { createOverlaySvg, transitionStage } from '../../src/core/renderer/overlay';
 import { useGlobalState } from '../../src/store';
@@ -80,7 +81,7 @@ describe('overlay', () => {
 
     createOverlaySvg(test1Stage);
 
-    expect(state.currentStages.value).toEqual([{
+    expect(toValue(state.currentStages.value)).toEqual([{
       x: 0,
       y: 0,
       width: 100,
@@ -103,7 +104,7 @@ describe('overlay', () => {
       stageRadius: 4,
     });
 
-    expect(state.currentStages.value).toEqual([{
+    expect(toValue(state.currentStages.value)).toEqual([{
       x: 20,
       y: 30,
       width: 100,
