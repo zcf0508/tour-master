@@ -77,7 +77,7 @@ tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
 
 #### vue
 ```typescript
-import { defineComponent, h } from 'vue';
+import { defineComponent, h, render } from 'vue';
 
 tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
   return () => {
@@ -94,10 +94,10 @@ tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
       },
     });
 
-    const tooltipEl = document.createElement('div');
-    const tooltipApp = createApp(tooltipComponent);
-    tooltipApp.mount(tooltipEl);
+    const tooltipElContainer = document.createElement('div');
+    render(tooltipComponent, tooltipElContainer);
 
+    const tooltipEl = tooltipElContainer.children[0] as HTMLElement;
     document.body.appendChild(tooltipEl);
 
     return tooltipEl;
