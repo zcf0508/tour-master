@@ -1,5 +1,5 @@
 import type { Placement } from '@floating-ui/dom';
-import type { MaybeRef } from '@vue/reactivity';
+import type { MaybeRef, Ref } from '@vue/reactivity';
 import type { StageDefinition } from './overlay';
 import type { PopoverArrowPositionedHandler } from './popover';
 import { toValue } from '@vue/reactivity';
@@ -12,7 +12,7 @@ export async function showStep(
   createPopoverEl: () => MaybeRef<HTMLElement>,
   stages: StageDefinition[] | (() => StageDefinition[]),
   options?: Partial<{
-    arrowElRef?: MaybeRef<HTMLElement | undefined>
+    arrowElRef?: Ref<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
     popoverOffset?: number
