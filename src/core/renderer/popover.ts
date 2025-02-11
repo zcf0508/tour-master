@@ -37,7 +37,8 @@ export function showPopover(
   referenceEl: MaybeRef<HTMLElement>,
   createTooltipEl: () => MaybeRef<HTMLElement>,
   options?: Partial<{
-    placement?: Placement
+    placement: Placement
+    zIndex: number
   }>,
 ): [HTMLElement, () => void] {
   const {
@@ -45,6 +46,12 @@ export function showPopover(
   } = options || {};
 
   const tooltipEl = createTooltipEl();
+
+  Object.assign(unref(tooltipEl).style, {
+    zIndex: options?.zIndex !== undefined
+      ? String(options.zIndex)
+      : undefined,
+  });
 
   const cleanup = autoUpdate(
     unref(referenceEl),

@@ -12,8 +12,14 @@ export async function showStep(
   stages: StageDefinition[] | (() => StageDefinition[]),
   options?: Partial<{
     placement: Placement
+    zIndex: number
   }>,
 ): Promise<[() => void, () => void]> {
+  const {
+    placement = 'bottom',
+    zIndex = 10000,
+  } = options || {};
+
   const state = useGlobalState();
 
   // ---
@@ -25,7 +31,10 @@ export async function showStep(
   const [popoverEl, destoryTooltip] = showPopover(
     referenceEl,
     createPopoverEl,
-    options,
+    {
+      placement,
+      zIndex: zIndex + 1,
+    },
   );
 
   state.popoverContext.value = [popoverEl, destoryTooltip];
@@ -38,6 +47,7 @@ export async function showStep(
       {
         stagePadding: 4,
         stageRadius: 4,
+        zIndex,
       },
     );
 
