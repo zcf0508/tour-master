@@ -76,7 +76,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
       }
     })());
 
-    if (!this.currentStep.stages?.length && !referenceEl) {
+    if (!toValue(this.currentStep.stages)?.length && !referenceEl) {
       throw new Error('At least one stage or a reference element needs to be provided.');
     }
 
