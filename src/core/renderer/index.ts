@@ -8,7 +8,6 @@ import { createOverlaySvg, transitionStage } from './overlay';
 import { showPopover } from './popover';
 
 export async function showStep(
-  referenceEl: MaybeRef<HTMLElement>,
   createPopoverEl: () => MaybeRef<HTMLElement>,
   stages: StageDefinition[] | (() => StageDefinition[]),
   options?: Partial<{
@@ -40,7 +39,19 @@ export async function showStep(
   }
 
   const [popoverEl, destoryPopover] = showPopover(
-    referenceEl,
+    {
+      getBoundingClientRect: () => {
+        const stage = toValue(stages)[0]!;
+
+        return {
+          ...stage,
+          top: stage.y,
+          bottom: stage.y + stage.height,
+          left: stage.x,
+          right: stage.x + stage.width,
+        };
+      },
+    },
     createPopoverEl,
     {
       arrowElRef,

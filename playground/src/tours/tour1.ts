@@ -14,7 +14,15 @@ export default function (): Tour<{ message: string }> {
         message: 'This tooltip is for step 1',
       },
       {
-        element: step12,
+        stages: () => {
+          const rect = step12.getBoundingClientRect();
+          return [{
+            x: rect.x,
+            y: rect.y,
+            width: rect.width + 20,
+            height: rect.height,
+          }];
+        },
         message: 'This tooltip is for step 2',
         placement: 'right',
       },

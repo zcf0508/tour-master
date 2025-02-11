@@ -1,4 +1,4 @@
-import type { MiddlewareData, Placement } from '@floating-ui/dom';
+import type { MiddlewareData, Placement, ReferenceElement } from '@floating-ui/dom';
 import type { MaybeRef, Ref } from '@vue/reactivity';
 import {
   arrow,
@@ -13,7 +13,7 @@ import { unref } from '@vue/reactivity';
 export type PopoverArrowPositionedHandler = (arrowEl: HTMLElement, placement: Placement, arrowData: NonNullable<MiddlewareData['arrow']>) => void;
 
 function updatePosition(
-  referenceEl: MaybeRef<HTMLElement>,
+  referenceEl: MaybeRef<ReferenceElement>,
   popoverEl: MaybeRef<HTMLElement>,
   options?: Partial<{
     placement?: Placement
@@ -60,7 +60,7 @@ function updatePosition(
 }
 
 export function showPopover(
-  referenceEl: MaybeRef<HTMLElement>,
+  referenceEl: MaybeRef<ReferenceElement>,
   createPopoverEl: () => MaybeRef<HTMLElement>,
   options?: Partial<{
     arrowElRef?: Ref<HTMLElement | undefined>

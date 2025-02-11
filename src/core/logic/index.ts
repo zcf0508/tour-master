@@ -5,7 +5,7 @@ import { ref, toValue } from '@vue/reactivity';
 import { showStep } from '../renderer';
 
 interface TourStep {
-  element: string | HTMLElement | (() => HTMLElement)
+  element?: string | HTMLElement | (() => HTMLElement)
   stages?: StageDefinition[] | (() => StageDefinition[])
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
@@ -81,7 +81,6 @@ export class Tour<T extends Record<string, unknown> | undefined> {
     const arrowElRef = ref<HTMLElement>();
 
     const [destoryOverlay, destoryPopover] = await showStep(
-      referenceEl,
       () => {
         const handelPre = this.handelPre.bind(this);
         const handelNext = this.handelNext.bind(this);
@@ -101,6 +100,10 @@ export class Tour<T extends Record<string, unknown> | undefined> {
         });
       },
       this.currentStep.stages ?? (() => {
+        if (!referenceEl) {
+          return [];
+        }
+
         const referenceElRect = referenceEl.getBoundingClientRect();
 
         return [
