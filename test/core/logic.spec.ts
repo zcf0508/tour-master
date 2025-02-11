@@ -1,4 +1,4 @@
-import type { TooltipTemplate } from '../../src/core/logic';
+import type { PopoverTemplate } from '../../src/core/logic';
 import { toValue } from '@vue/reactivity';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Tour } from '../../src/core/logic';
@@ -13,7 +13,7 @@ vi.mock('../../src/core/renderer/overlay', async (importOriginal) => {
 });
 
 describe('tour', () => {
-  let mockTooltipTemplate: TooltipTemplate<unknown>;
+  let mockPopoverTemplate: PopoverTemplate<unknown>;
 
   beforeEach(() => {
     // Mock DOM elements
@@ -22,7 +22,7 @@ describe('tour', () => {
       <div id="step2">Step 2</div>
     `;
 
-    mockTooltipTemplate = vi.fn(() => {
+    mockPopoverTemplate = vi.fn(() => {
       return () => document.createElement('div');
     });
   });
@@ -45,11 +45,11 @@ describe('tour', () => {
           },
         },
       ],
-      tooltipTemplate: mockTooltipTemplate,
+      popoverTemplate: mockPopoverTemplate,
     });
 
     await tour.start();
-    expect(mockTooltipTemplate).toHaveBeenCalled();
+    expect(mockPopoverTemplate).toHaveBeenCalled();
   });
 
   it('element is a function', async () => {
@@ -70,11 +70,11 @@ describe('tour', () => {
           },
         },
       ],
-      tooltipTemplate: mockTooltipTemplate,
+      popoverTemplate: mockPopoverTemplate,
     });
 
     await tour.start();
-    expect(mockTooltipTemplate).toHaveBeenCalled();
+    expect(mockPopoverTemplate).toHaveBeenCalled();
   });
 
   it('navigation', async () => {
@@ -115,13 +115,13 @@ describe('tour', () => {
           leave: mockLeave2,
         },
       ],
-      tooltipTemplate: mockTooltipTemplate,
+      popoverTemplate: mockPopoverTemplate,
     });
 
     await tour.start();
 
     expect(mockEntry1).toHaveBeenCalledWith('next');
-    expect(mockTooltipTemplate).toHaveBeenCalled();
+    expect(mockPopoverTemplate).toHaveBeenCalled();
 
     // @ts-expect-error Trigger next
     await tour.handelNext();
@@ -155,7 +155,7 @@ describe('tour', () => {
           leave: mockLeave,
         },
       ],
-      tooltipTemplate: mockTooltipTemplate,
+      popoverTemplate: mockPopoverTemplate,
     });
 
     await tour.start();

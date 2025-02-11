@@ -30,7 +30,7 @@ export default function (): Tour<{ message: string }> {
         placement: 'right',
       },
     ],
-    tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+    popoverTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
       return () => {
         const tooltipEl = document.createElement('div') as HTMLElement;
         tooltipEl.innerHTML = `<div>

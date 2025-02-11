@@ -7,7 +7,7 @@ A flexible and customizable tour guide library for web applications.
 ## Features
 
 - Support for multiple sequential tours
-- Customizable tooltip templates and styling
+- Customizable popover templates and styling
 - Configurable step navigation and positioning
 - TypeScript support
 
@@ -52,14 +52,14 @@ interface TourStep {
 }
 ```
 
-### Custom Tooltip Template
+### Custom Popover Template
 
 #### Vanilla JS
 ```typescript
-tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
   return () => {
-    const tooltipEl = document.createElement('div');
-    tooltipEl.innerHTML = `
+    const popoverEl = document.createElement('div');
+    popoverEl.innerHTML = `
       <div>${currentStep.message}</div>
       <div>
         <button data-action="pre">Previous</button>
@@ -68,9 +68,9 @@ tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
       </div>
     `;
 
-    document.body.appendChild(tooltipEl);
+    document.body.appendChild(popoverEl);
 
-    return tooltipEl;
+    return popoverEl;
   };
 };
 ```
@@ -79,9 +79,9 @@ tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
 ```typescript
 import { defineComponent, h, render } from 'vue';
 
-tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
   return () => {
-    const tooltipComponent = defineComponent({
+    const popoverComponent = defineComponent({
       render() {
         return h('div', [
           h('div', currentStep.message),
@@ -94,13 +94,13 @@ tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
       },
     });
 
-    const tooltipElContainer = document.createElement('div');
-    render(tooltipComponent, tooltipElContainer);
+    const popoverElContainer = document.createElement('div');
+    render(popoverComponent, popoverElContainer);
 
-    const tooltipEl = tooltipElContainer.children[0] as HTMLElement;
-    document.body.appendChild(tooltipEl);
+    const popoverEl = popoverElContainer.children[0] as HTMLElement;
+    document.body.appendChild(popoverEl);
 
-    return tooltipEl;
+    return popoverEl;
   };
 };
 ```
@@ -127,7 +127,7 @@ const tourScheduler = new TourScheduler({
 Check the `playground` directory in the repository for complete working examples including:
 
 - Multiple sequential tours
-- Custom tooltip styling
+- Custom popover styling
 - Tour transitions
 
 ## License

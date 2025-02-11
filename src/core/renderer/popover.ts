@@ -11,12 +11,12 @@ import { unref } from '@vue/reactivity';
 
 function updatePosition(
   referenceEl: MaybeRef<HTMLElement>,
-  tooltipEl: MaybeRef<HTMLElement>,
+  popoverEl: MaybeRef<HTMLElement>,
   placement?: Placement,
 ): void {
   computePosition(
     unref(referenceEl),
-    unref(tooltipEl),
+    unref(popoverEl),
     {
       placement,
       middleware: [
@@ -26,7 +26,7 @@ function updatePosition(
       ],
     },
   ).then(({ x, y }) => {
-    Object.assign(unref(tooltipEl).style, {
+    Object.assign(unref(popoverEl).style, {
       left: `${x}px`,
       top: `${y}px`,
     });
@@ -35,7 +35,7 @@ function updatePosition(
 
 export function showPopover(
   referenceEl: MaybeRef<HTMLElement>,
-  createTooltipEl: () => MaybeRef<HTMLElement>,
+  createPopoverEl: () => MaybeRef<HTMLElement>,
   options?: Partial<{
     placement: Placement
     zIndex: number
@@ -45,9 +45,9 @@ export function showPopover(
     placement = 'bottom',
   } = options || {};
 
-  const tooltipEl = createTooltipEl();
+  const popoverEl = createPopoverEl();
 
-  Object.assign(unref(tooltipEl).style, {
+  Object.assign(unref(popoverEl).style, {
     zIndex: options?.zIndex !== undefined
       ? String(options.zIndex)
       : undefined,
@@ -55,17 +55,17 @@ export function showPopover(
 
   const cleanup = autoUpdate(
     unref(referenceEl),
-    unref(tooltipEl),
-    () => updatePosition(referenceEl, tooltipEl, placement),
+    unref(popoverEl),
+    () => updatePosition(referenceEl, popoverEl, placement),
   );
 
   function destory(): void {
     cleanup();
-    unref(tooltipEl).remove();
+    unref(popoverEl).remove();
   }
 
   return [
-    unref(tooltipEl),
+    unref(popoverEl),
     destory,
   ];
 }

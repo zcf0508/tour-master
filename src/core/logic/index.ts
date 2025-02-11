@@ -11,7 +11,7 @@ interface TourStep {
   placement?: Placement
 }
 
-export type TooltipTemplate<T> = (
+export type PopoverTemplate<T> = (
   pre: () => void,
   next: () => void,
   finish: () => void,
@@ -22,7 +22,7 @@ export type TooltipTemplate<T> = (
 
 interface TourConfig<T = undefined> {
   steps: Array<TourStep & T>
-  tooltipTemplate: TooltipTemplate<T>
+  popoverTemplate: PopoverTemplate<T>
 }
 
 export class Tour<T extends Record<string, unknown> | undefined> {
@@ -66,7 +66,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
 
     await this.currentStep.entry?.(action);
 
-    const [destoryOverlay, destoryTooltip] = await showStep(
+    const [destoryOverlay, destoryPopover] = await showStep(
       referenceEl,
       () => {
         const handelPre = this.handelPre.bind(this);
@@ -74,7 +74,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
         const handelFinish = this.handelFinish.bind(this);
         const currentStep = this.currentStep;
         const stepTotal = this.config.steps.length;
-        const createTooltipEl = this.config.tooltipTemplate(
+        const createPopoverEl = this.config.popoverTemplate(
           handelPre,
           handelNext,
           handelFinish,
@@ -82,7 +82,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
           index,
           stepTotal,
         );
-        return createTooltipEl(currentStep);
+        return createPopoverEl(currentStep);
       },
       this.currentStep.stages ?? (() => {
         const referenceElRect = referenceEl.getBoundingClientRect();
@@ -103,7 +103,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
 
     this.destroy = () => {
       destoryOverlay();
-      destoryTooltip();
+      destoryPopover();
     };
   }
 

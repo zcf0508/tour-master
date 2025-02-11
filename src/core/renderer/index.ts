@@ -28,7 +28,7 @@ export async function showStep(
     state.popoverContext.value[1]();
   }
 
-  const [popoverEl, destoryTooltip] = showPopover(
+  const [popoverEl, destoryPopover] = showPopover(
     referenceEl,
     createPopoverEl,
     {
@@ -37,7 +37,7 @@ export async function showStep(
     },
   );
 
-  state.popoverContext.value = [popoverEl, destoryTooltip];
+  state.popoverContext.value = [popoverEl, destoryPopover];
 
   // ---
 
@@ -72,6 +72,6 @@ export async function showStep(
 
   return [
     destoryOverlay,
-    destoryTooltip,
+    destoryPopover,
   ];
 }

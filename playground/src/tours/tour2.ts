@@ -35,7 +35,7 @@ export default function (): Tour<{ message: string }> {
         message: 'This tooltip is for step 2',
       },
     ],
-    tooltipTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+    popoverTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
       return () => {
         const tooltipEl = document.createElement('div') as HTMLElement;
         tooltipEl.innerHTML = `<div>
