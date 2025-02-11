@@ -171,6 +171,30 @@ const tour = new Tour({
   ],
 });
 ```
+### Multiple Tours Scheduler
+
+You can chain multiple tours together:
+
+```typescript
+const tourScheduler = new TourScheduler({
+  tours: new Map([
+    ['tour1', tour1],
+    ['tour2', tour2],
+  ]),
+  stateHandler() {
+    // Logic to determine which tour to show
+    return 'tour1'; // or 'tour2'
+  },
+});
+```
+
+## Examples
+
+Check the `playground` directory in the repository for complete working examples including:
+
+- Multiple sequential tours
+- Custom popover styling
+- Tour transitions
 
 ## License
 
