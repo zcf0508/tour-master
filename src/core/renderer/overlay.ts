@@ -2,6 +2,7 @@
  * Inspired by https://github.com/kamranahmedse/driver.js/blob/1.3.4/src/overlay.ts
  */
 
+import { toValue } from '@vue/reactivity';
 import { useGlobalState } from '../../store';
 
 export interface StageDefinition {
@@ -49,7 +50,7 @@ function generateStageSvgPathString(stages: StageDefinition[]): string {
 }
 
 export function createOverlaySvg(
-  stages: StageDefinition[],
+  stages: StageDefinition[] | (() => StageDefinition[]),
   /**
    * `stagePadding` and `stageRadius` will become the default value for all stages.
    */
@@ -77,13 +78,15 @@ export function createOverlaySvg(
 
   const state = useGlobalState();
 
-  const processedStages = stages.map(
-    stage => ({
-      ...stage,
-      padding: stage.padding ?? stagePadding,
-      radius: stage.radius ?? stageRadius,
-    }),
-  );
+  function processedStages(): StageDefinition[] {
+    return toValue(stages).map(
+      stage => ({
+        ...stage,
+        padding: stage.padding ?? stagePadding,
+        radius: stage.radius ?? stageRadius,
+      }),
+    );
+  };
 
   state.currentStages.value = processedStages;
 
@@ -114,7 +117,7 @@ export function createOverlaySvg(
 
   stagePath.setAttribute(
     'd',
-    generateStageSvgPathString(processedStages),
+    generateStageSvgPathString(toValue(processedStages)),
   );
 
   stagePath.style.fill = overlayColor;
@@ -140,7 +143,7 @@ export function refreshOverlay(): void {
     if (state.currentStages.value) {
       overlaySvg.children[0].setAttribute(
         'd',
-        generateStageSvgPathString(state.currentStages.value),
+        generateStageSvgPathString(toValue(state.currentStages.value)),
       );
     }
   }
@@ -202,16 +205,19 @@ function interpolateStages(
   return result;
 }
 
-export function transitionStage(newStages: StageDefinition[], options?: Partial<{
+export function transitionStage(
+  newStages: StageDefinition[] | (() => StageDefinition[]),
+  options?: Partial<{
   /**
    * This will become the default value for all stages.
    */
-  stagePadding: number
-  /**
-   * This will become the default value for all stages.
-   */
-  stageRadius: number
-}>): Promise<void> {
+    stagePadding: number
+    /**
+     * This will become the default value for all stages.
+     */
+    stageRadius: number
+  }>,
+): Promise<void> {
   return new Promise((resolve) => {
     const state = useGlobalState();
     if (!state.overlayDom.value || !state.currentStages.value) {
@@ -224,13 +230,15 @@ export function transitionStage(newStages: StageDefinition[], options?: Partial<
     const duration = 300; // Animation duration in milliseconds
     const startTime = performance.now();
 
-    const processedNewStages = newStages.map(
-      stage => ({
-        ...stage,
-        padding: stage.padding ?? options?.stagePadding,
-        radius: stage.radius ?? options?.stageRadius,
-      }),
-    );
+    function processedNewStages(): StageDefinition[] {
+      return toValue(newStages).map(
+        stage => ({
+          ...stage,
+          padding: stage.padding ?? options?.stagePadding,
+          radius: stage.radius ?? options?.stageRadius,
+        }),
+      );
+    };
 
     function animate(currentTime: number): void {
       const elapsed = currentTime - startTime;
@@ -241,7 +249,7 @@ export function transitionStage(newStages: StageDefinition[], options?: Partial<
         ? 4 * progress * progress * progress
         : 1 - (-2 * progress + 2) ** 3 / 2;
 
-      const interpolatedStages = interpolateStages(startStages, processedNewStages, eased);
+      const interpolatedStages = interpolateStages(toValue(startStages), toValue(processedNewStages), eased);
 
       overlaySvg.children[0].setAttribute(
         'd',

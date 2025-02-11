@@ -58,7 +58,7 @@ export async function showStep(
 
   if (!state.overlayDom.value) {
     const overlaySvg = createOverlaySvg(
-      toValue(stages),
+      stages,
       {
         stagePadding: 4,
         stageRadius: 4,
@@ -73,7 +73,7 @@ export async function showStep(
   }
   else {
     await transitionStage(
-      toValue(stages),
+      stages,
       {
         stagePadding: 4,
         stageRadius: 4,
