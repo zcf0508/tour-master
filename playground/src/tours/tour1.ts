@@ -12,21 +12,10 @@ export default function (): Tour<{ message: string }> {
       {
         element: step11,
         message: 'This tooltip is for step 1',
-        leave(action) {
-          if (action === 'finish') {
-            localStorage.setItem('showTour1', 'false');
-          }
-        },
       },
       {
         element: step12,
         message: 'This tooltip is for step 2',
-        leave(action) {
-          if (action === 'finish') {
-            localStorage.setItem('showTour1', 'false');
-            tourScheduler.startTour();
-          }
-        },
         placement: 'right',
       },
     ],
@@ -114,5 +103,8 @@ export default function (): Tour<{ message: string }> {
     popoverOffset: 16,
     zIndex: 200,
     overlayOpacity: 0.75,
+    onFinish() {
+      localStorage.setItem('showTour1', 'false');
+    },
   });
 }

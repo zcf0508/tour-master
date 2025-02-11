@@ -31,6 +31,10 @@ interface TourConfig<T = undefined> {
   popoverPadding?: number
   zIndex?: number
   overlayOpacity?: number
+  /** call before start */
+  onStart?: (() => void) | (() => Promise<void>)
+  /** call after finish */
+  onFinish?: (() => void) | (() => Promise<void>)
 }
 
 export class Tour<T extends Record<string, unknown> | undefined> {
@@ -138,10 +142,12 @@ export class Tour<T extends Record<string, unknown> | undefined> {
     this.destroy = undefined;
 
     await this.currentStep.leave?.('finish');
+    await this.config.onFinish?.();
     this.stepIndex = -1;
   }
 
   public async start(): Promise<void> {
+    await this.config.onStart?.();
     await this.showStep(0, 'next');
   }
 }
