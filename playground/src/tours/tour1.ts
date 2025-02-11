@@ -31,9 +31,10 @@ export default function (): Tour<{ message: string }> {
       },
     ],
     popoverTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
-      return () => {
+      return (bindArrowEl) => {
         const tooltipEl = document.createElement('div') as HTMLElement;
-        tooltipEl.innerHTML = `<div>
+        tooltipEl.innerHTML = `<div id="arrow" style="position: absolute"></div>
+  <div>
     <div>${currentStep.message}</div>
     <div>
       <button class="tooltip-btn" data-action="pre">Pre</button>
@@ -74,8 +75,41 @@ export default function (): Tour<{ message: string }> {
 
         document.body.appendChild(tooltipEl);
 
+        const arrowEl = tooltipEl.querySelector('#arrow')! as HTMLElement;
+
+        Object.assign(arrowEl.style, {
+          background: '#fff',
+          width: '8px',
+          height: '8px',
+          transform: 'rotate(45deg)',
+        });
+
+        bindArrowEl(arrowEl);
+
         return tooltipEl;
       };
+    },
+    popoverArrowPositioned: (arrowEl, placement, arrowData) => {
+      const { x: arrowX, y: arrowY } = arrowData;
+
+      const staticSide = {
+        top: 'bottom',
+        right: 'left',
+        bottom: 'top',
+        left: 'right',
+      }[placement.split('-')[0]]!;
+
+      Object.assign(arrowEl.style, {
+        left: arrowX != null
+          ? `${arrowX}px`
+          : '',
+        top: arrowY != null
+          ? `${arrowY}px`
+          : '',
+        right: '',
+        bottom: '',
+        [staticSide]: '-4px',
+      });
     },
     zIndex: 200,
     overlayOpacity: 0.75,

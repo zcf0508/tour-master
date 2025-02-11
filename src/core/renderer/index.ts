@@ -1,6 +1,7 @@
 import type { Placement } from '@floating-ui/dom';
 import type { MaybeRef } from '@vue/reactivity';
 import type { StageDefinition } from './overlay';
+import type { PopoverArrowPositionedHandler } from './popover';
 import { toValue } from '@vue/reactivity';
 import { useGlobalState } from '../../store';
 import { createOverlaySvg, transitionStage } from './overlay';
@@ -11,12 +12,16 @@ export async function showStep(
   createPopoverEl: () => MaybeRef<HTMLElement>,
   stages: StageDefinition[] | (() => StageDefinition[]),
   options?: Partial<{
+    arrowElRef?: MaybeRef<HTMLElement | undefined>
+    popoverArrowPositioned?: PopoverArrowPositionedHandler
     overlayOpacity: number
     placement: Placement
     zIndex: number
   }>,
 ): Promise<[() => void, () => void]> {
   const {
+    arrowElRef,
+    popoverArrowPositioned,
     overlayOpacity,
     placement = 'bottom',
     zIndex = 10000,
@@ -34,6 +39,8 @@ export async function showStep(
     referenceEl,
     createPopoverEl,
     {
+      arrowElRef,
+      popoverArrowPositioned,
       placement,
       zIndex: zIndex + 1,
     },

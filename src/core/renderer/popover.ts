@@ -1,6 +1,7 @@
-import type { Placement } from '@floating-ui/dom';
+import type { MiddlewareData, Placement } from '@floating-ui/dom';
 import type { MaybeRef } from '@vue/reactivity';
 import {
+  arrow,
   autoUpdate,
   computePosition,
   flip,
@@ -9,11 +10,23 @@ import {
 } from '@floating-ui/dom';
 import { unref } from '@vue/reactivity';
 
+export type PopoverArrowPositionedHandler = (arrowEl: HTMLElement, placement: Placement, arrowData: NonNullable<MiddlewareData['arrow']>) => void;
+
 function updatePosition(
   referenceEl: MaybeRef<HTMLElement>,
   popoverEl: MaybeRef<HTMLElement>,
-  placement?: Placement,
+  options?: Partial<{
+    placement?: Placement
+    arrowElRef?: MaybeRef<HTMLElement | undefined>
+    popoverArrowPositioned?: PopoverArrowPositionedHandler
+  }>,
 ): void {
+  const {
+    placement,
+    arrowElRef,
+    popoverArrowPositioned,
+  } = options ?? {};
+
   computePosition(
     unref(referenceEl),
     unref(popoverEl),
@@ -23,13 +36,22 @@ function updatePosition(
         flip(),
         shift({ padding: 4 }),
         offset(8),
+        ...(
+          unref(arrowElRef)
+            ? [arrow({ element: unref(arrowElRef)! })]
+            : []
+        ),
       ],
     },
-  ).then(({ x, y }) => {
+  ).then(({ x, y, placement, middlewareData }) => {
     Object.assign(unref(popoverEl).style, {
       left: `${x}px`,
       top: `${y}px`,
     });
+
+    if (middlewareData.arrow && unref(arrowElRef)) {
+      popoverArrowPositioned?.(unref(arrowElRef)!, placement, middlewareData.arrow);
+    }
   });
 }
 
@@ -37,11 +59,15 @@ export function showPopover(
   referenceEl: MaybeRef<HTMLElement>,
   createPopoverEl: () => MaybeRef<HTMLElement>,
   options?: Partial<{
+    arrowElRef?: MaybeRef<HTMLElement | undefined>
+    popoverArrowPositioned?: PopoverArrowPositionedHandler
     placement: Placement
     zIndex: number
   }>,
 ): [HTMLElement, () => void] {
   const {
+    arrowElRef,
+    popoverArrowPositioned,
     placement = 'bottom',
   } = options || {};
 
@@ -56,7 +82,11 @@ export function showPopover(
   const cleanup = autoUpdate(
     unref(referenceEl),
     unref(popoverEl),
-    () => updatePosition(referenceEl, popoverEl, placement),
+    () => updatePosition(referenceEl, popoverEl, {
+      arrowElRef,
+      placement,
+      popoverArrowPositioned,
+    }),
   );
 
   function destory(): void {

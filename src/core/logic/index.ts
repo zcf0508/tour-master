@@ -1,6 +1,7 @@
 import type { Placement } from '@floating-ui/dom';
 import type { StageDefinition } from '../renderer/overlay';
-import { toValue } from '@vue/reactivity';
+import type { PopoverArrowPositionedHandler } from '../renderer/popover';
+import { ref, toValue } from '@vue/reactivity';
 import { showStep } from '../renderer';
 
 interface TourStep {
@@ -11,6 +12,8 @@ interface TourStep {
   placement?: Placement
 }
 
+type BindArrowEl = ((arrowEl: HTMLElement) => void);
+
 export type PopoverTemplate<T> = (
   pre: () => void,
   next: () => void,
@@ -18,11 +21,12 @@ export type PopoverTemplate<T> = (
   currentStep: TourStep & T,
   currentStepIndex: number,
   stepTotal: number,
-) => (T extends undefined ? (() => HTMLElement) : ((data: T) => HTMLElement));
+) => ((bindArrowEl: BindArrowEl) => HTMLElement);
 
 interface TourConfig<T = undefined> {
   steps: Array<TourStep & T>
   popoverTemplate: PopoverTemplate<T>
+  popoverArrowPositioned?: PopoverArrowPositionedHandler
   zIndex?: number
   overlayOpacity?: number
 }
@@ -68,6 +72,8 @@ export class Tour<T extends Record<string, unknown> | undefined> {
 
     await this.currentStep.entry?.(action);
 
+    const arrowElRef = ref<HTMLElement>();
+
     const [destoryOverlay, destoryPopover] = await showStep(
       referenceEl,
       () => {
@@ -84,7 +90,9 @@ export class Tour<T extends Record<string, unknown> | undefined> {
           index,
           stepTotal,
         );
-        return createPopoverEl(currentStep);
+        return createPopoverEl((arrowEl: HTMLElement) => {
+          arrowElRef.value = arrowEl;
+        });
       },
       this.currentStep.stages ?? (() => {
         const referenceElRect = referenceEl.getBoundingClientRect();
@@ -99,6 +107,8 @@ export class Tour<T extends Record<string, unknown> | undefined> {
         ];
       }),
       {
+        arrowElRef,
+        popoverArrowPositioned: this.config.popoverArrowPositioned,
         placement: this.currentStep.placement,
         zIndex: this.config.zIndex,
         overlayOpacity: this.config.overlayOpacity,
