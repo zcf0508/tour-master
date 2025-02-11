@@ -2,14 +2,17 @@
 
 [![NPM version](https://img.shields.io/npm/v/tour-master?color=a1b858&label=)](https://www.npmjs.com/package/tour-master)
 
-A flexible and customizable tour guide library for web applications.
+A flexible and customizable tour guide library for web applications, built with TypeScript and Vue.js reactivity system.
 
 ## Features
 
-- Support for multiple sequential tours
-- Customizable popover templates and styling
-- Configurable step navigation and positioning
-- TypeScript support
+- 🎯 Highly customizable tour steps and popover templates
+- 🎨 Flexible positioning and styling options
+- 🔄 Support for entry/leave hooks for each step
+- 🎭 Customizable overlay and highlighting
+- 📏 Configurable offsets and padding
+- 🎯 Multiple placement options
+- 💪 Written in TypeScript with full type support
 
 ## Installation
 
@@ -22,113 +25,152 @@ npm install tour-master
 ```typescript
 import { Tour } from 'tour-master';
 
-// Create tour instances
-const tour = new Tour<{ message: string }>({
+const tour = new Tour({
   steps: [
     {
-      element: document.getElementById('step1'),
-      message: 'This is step 1',
+      element: '#step1', // Can be string ID, HTMLElement, or function
+      stages: [ // Optional custom highlight areas
+        {
+          x: 0,
+          y: 0,
+          width: 100,
+          height: 100,
+        },
+      ],
     },
     {
       element: document.getElementById('step2'),
-      message: 'This is step 2',
+      placement: 'top', // Control popover placement
+      entry: async (action) => {
+        // Do something when entering this step
+      },
+      leave: async (action) => {
+        // Do something when leaving this step
+      },
     },
   ],
+  popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
+    // Return a function that creates and returns your popover element
+    return (bindArrowEl) => {
+      const el = document.createElement('div');
+      // ... configure your popover
+      return el;
+    };
+  },
+  // Optional configurations
+  popoverOffset: 8,
+  popoverPadding: 5,
+  zIndex: 1000,
+  overlayOpacity: 0.5,
 });
 
+// Start the tour
 tour.start();
 ```
 
-## Tour Configuration
+## Configuration Options
+
+### Tour Configuration
+
+```typescript
+interface TourConfig<T = undefined> {
+  steps: Array<TourStep & T>
+  popoverTemplate: PopoverTemplate<T>
+  popoverArrowPositioned?: PopoverArrowPositionedHandler
+  popoverOffset?: number
+  popoverPadding?: number
+  zIndex?: number
+  overlayOpacity?: number
+}
+```
 
 ### Step Options
 
 ```typescript
 interface TourStep {
   element: string | HTMLElement | (() => HTMLElement)
+  stages?: StageDefinition[] | (() => StageDefinition[])
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
   placement?: Placement
 }
 ```
 
-### Custom Popover Template
+### Custom Popover Templates
 
-#### Vanilla JS
-```typescript
-popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
-  return () => {
-    const popoverEl = document.createElement('div');
-    popoverEl.innerHTML = `
-      <div>${currentStep.message}</div>
-      <div>
-        <button data-action="pre">Previous</button>
-        <button data-action="next">Next</button>
-        <button data-action="finish">Finish</button>
-      </div>
-    `;
+You can create custom popover templates using vanilla JavaScript or any framework. Here's an example with Vue:
 
-    document.body.appendChild(popoverEl);
-
-    return popoverEl;
-  };
-};
-```
-
-#### vue
 ```typescript
 import { defineComponent, h, render } from 'vue';
 
-popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
-  return () => {
-    const popoverComponent = defineComponent({
-      render() {
-        return h('div', [
-          h('div', currentStep.message),
-          h('div', [
-            h('button', { onClick: pre }, 'Previous'),
-            h('button', { onClick: next }, 'Next'),
-            h('button', { onClick: finish }, 'Finish'),
-          ]),
-        ]);
-      },
-    });
+const tour = new Tour({
+  // ... other config
+  popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
+    return (bindArrowEl) => {
+      const component = defineComponent({
+        setup() {
+          return () => h('div', { class: 'tour-popover' }, [
+            h('div', { class: 'content' }, currentStep.content),
+            h('div', { class: 'actions' }, [
+              h('button', { onClick: pre }, 'Previous'),
+              h('button', { onClick: next }, 'Next'),
+              h('button', { onClick: finish }, 'Finish'),
+            ]),
+          ]);
+        },
+      });
 
-    const popoverElContainer = document.createElement('div');
-    render(popoverComponent, popoverElContainer);
-
-    const popoverEl = popoverElContainer.children[0] as HTMLElement;
-    document.body.appendChild(popoverEl);
-
-    return popoverEl;
-  };
-};
-```
-
-## Multiple Tours
-
-You can chain multiple tours together:
-
-```typescript
-const tourScheduler = new TourScheduler({
-  tours: new Map([
-    ['tour1', tour1],
-    ['tour2', tour2],
-  ]),
-  stateHandler() {
-    // Logic to determine which tour to show
-    return 'tour1'; // or 'tour2'
+      const container = document.createElement('div');
+      render(component, container);
+      return container.firstElementChild as HTMLElement;
+    };
   },
 });
 ```
 
-## Examples
+## Advanced Features
 
-Check the `playground` directory in the repository for complete working examples including:
+### Custom Stage Definitions
 
-- Multiple sequential tours
-- Custom popover styling
-- Tour transitions
+You can define custom highlight areas for each step:
+
+```typescript
+const tour = new Tour({
+  steps: [
+    {
+      element: '#step1',
+      stages: () => [{
+        x: 100,
+        y: 100,
+        width: 200,
+        height: 50,
+      }],
+    },
+  ],
+});
+```
+
+### Lifecycle Hooks
+
+Each step supports entry and leave hooks:
+
+```typescript
+const tour = new Tour({
+  steps: [
+    {
+      element: '#step2',
+      entry: async (action) => {
+        // action will be 'pre' or 'next'
+        await someAsyncOperation();
+      },
+      leave: async (action) => {
+        // action will be 'pre', 'next', or 'finish'
+        await cleanup();
+      },
+    },
+  ],
+});
+```
 
 ## License
 
