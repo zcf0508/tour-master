@@ -11,15 +11,6 @@ export default function (): Tour<{ message: string }> {
     steps: [
       {
         element: step11,
-        stages: () => {
-          const rect = step11.getBoundingClientRect();
-          return [{
-            x: rect.x,
-            y: rect.y,
-            width: rect.width,
-            height: rect.height,
-          }];
-        },
         message: 'This tooltip is for step 1',
         leave(action) {
           if (action === 'finish') {
@@ -29,15 +20,6 @@ export default function (): Tour<{ message: string }> {
       },
       {
         element: step12,
-        stages: () => {
-          const rect = step12.getBoundingClientRect();
-          return [{
-            x: rect.x,
-            y: rect.y,
-            width: rect.width,
-            height: rect.height,
-          }];
-        },
         message: 'This tooltip is for step 2',
         leave(action) {
           if (action === 'finish') {

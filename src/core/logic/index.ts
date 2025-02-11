@@ -5,7 +5,7 @@ import { showStep } from '../renderer';
 
 interface TourStep {
   element: string | HTMLElement | (() => HTMLElement)
-  stages: StageDefinition[] | (() => StageDefinition[])
+  stages?: StageDefinition[] | (() => StageDefinition[])
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
   placement?: Placement
@@ -84,7 +84,18 @@ export class Tour<T extends Record<string, unknown> | undefined> {
         );
         return createTooltipEl(currentStep);
       },
-      this.currentStep.stages,
+      this.currentStep.stages ?? (() => {
+        const referenceElRect = referenceEl.getBoundingClientRect();
+
+        return [
+          {
+            x: referenceElRect.x,
+            y: referenceElRect.y,
+            width: referenceElRect.width,
+            height: referenceElRect.height,
+          },
+        ];
+      }),
       {
         placement: this.currentStep.placement,
       },
