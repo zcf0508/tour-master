@@ -19,12 +19,16 @@ function updatePosition(
     placement?: Placement
     arrowElRef?: MaybeRef<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
+    popoverPadding?: number
+    popoverOffset?: number
   }>,
 ): void {
   const {
     placement,
     arrowElRef,
     popoverArrowPositioned,
+    popoverPadding = 4,
+    popoverOffset = 8,
   } = options ?? {};
 
   computePosition(
@@ -34,8 +38,8 @@ function updatePosition(
       placement,
       middleware: [
         flip(),
-        shift({ padding: 4 }),
-        offset(8),
+        shift({ padding: popoverPadding }),
+        offset(popoverOffset),
         ...(
           unref(arrowElRef)
             ? [arrow({ element: unref(arrowElRef)! })]
@@ -61,6 +65,8 @@ export function showPopover(
   options?: Partial<{
     arrowElRef?: MaybeRef<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
+    popoverPadding?: number
+    popoverOffset?: number
     placement: Placement
     zIndex: number
   }>,
@@ -68,6 +74,8 @@ export function showPopover(
   const {
     arrowElRef,
     popoverArrowPositioned,
+    popoverPadding,
+    popoverOffset,
     placement = 'bottom',
   } = options || {};
 
@@ -86,6 +94,8 @@ export function showPopover(
       arrowElRef,
       placement,
       popoverArrowPositioned,
+      popoverPadding,
+      popoverOffset,
     }),
   );
 

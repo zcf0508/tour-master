@@ -14,6 +14,8 @@ export async function showStep(
   options?: Partial<{
     arrowElRef?: MaybeRef<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
+    popoverPadding?: number
+    popoverOffset?: number
     overlayOpacity: number
     placement: Placement
     zIndex: number
@@ -22,6 +24,8 @@ export async function showStep(
   const {
     arrowElRef,
     popoverArrowPositioned,
+    popoverOffset,
+    popoverPadding,
     overlayOpacity,
     placement = 'bottom',
     zIndex = 10000,
@@ -41,6 +45,8 @@ export async function showStep(
     {
       arrowElRef,
       popoverArrowPositioned,
+      popoverOffset,
+      popoverPadding,
       placement,
       zIndex: zIndex + 1,
     },

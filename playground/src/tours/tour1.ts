@@ -111,6 +111,7 @@ export default function (): Tour<{ message: string }> {
         [staticSide]: '-4px',
       });
     },
+    popoverOffset: 16,
     zIndex: 200,
     overlayOpacity: 0.75,
   });
