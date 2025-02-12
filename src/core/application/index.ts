@@ -1,4 +1,4 @@
-import type { Ref } from '@vue/reactivity';
+import type { ShallowRef } from '@vue/reactivity';
 import type { Tour } from '../logic';
 import { createContext } from './context';
 
@@ -14,7 +14,7 @@ export class TourScheduler<
   CT extends object = object,
 > {
   public config: TourSchedulerConfig<T>;
-  public context: Ref<Partial<CT>>;
+  public context: ShallowRef<Partial<CT>>;
 
   constructor(_config: TourSchedulerConfig<T, CT>) {
     this.config = _config;
