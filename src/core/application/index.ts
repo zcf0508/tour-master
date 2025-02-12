@@ -1,23 +1,24 @@
 import type { Ref } from '@vue/reactivity';
 import type { Tour } from '../logic';
-import { useContext } from './context';
+import { createContext } from './context';
 
-interface TourSchedulerConfig<T = string> {
+interface TourSchedulerConfig<T = string, CT = object> {
   // eslint-disable-next-line ts/no-explicit-any
   tours: Map<T, Tour<any>>
   stateHandler: () => (T | undefined)
+  initialContext?: CT
 }
 
 export class TourScheduler<
   T extends string = string,
-  CT extends Map<string, unknown> = Map<string, unknown>,
+  CT extends object = object,
 > {
   public config: TourSchedulerConfig<T>;
-  public context: Ref<CT>;
+  public context: Ref<Partial<CT>>;
 
-  constructor(_config: TourSchedulerConfig<T>) {
+  constructor(_config: TourSchedulerConfig<T, CT>) {
     this.config = _config;
-    this.context = useContext().context as Ref<CT>;
+    this.context = createContext(_config.initialContext);
   }
 
   /** start the next tour */

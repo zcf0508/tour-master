@@ -12,6 +12,14 @@ export default function (): Tour<{ message: string }> {
       {
         element: step11,
         message: 'This tooltip is for step 1',
+        leave() {
+          if (tourScheduler.context.value.globalMessage) {
+            tourScheduler.context.value.globalMessage++;
+          }
+          else {
+            tourScheduler.context.value.globalMessage = 1;
+          }
+        },
       },
       {
         stages: () => {
@@ -25,6 +33,9 @@ export default function (): Tour<{ message: string }> {
         },
         message: 'This tooltip is for step 2',
         placement: 'right',
+        entry() {
+          console.log(`globalMessage: ${tourScheduler.context.value.globalMessage}`);
+        },
       },
     ],
     popoverTemplate: (pre, next, finish, currentStep, currentStepIndex) => {

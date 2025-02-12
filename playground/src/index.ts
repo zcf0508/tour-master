@@ -17,6 +17,7 @@ export const tourScheduler = new TourScheduler({
       return 'tour2';
     }
   },
+  initialContext: {} as { globalMessage: number },
 });
 
 tourScheduler.startTour();
