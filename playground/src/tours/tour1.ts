@@ -13,11 +13,14 @@ export default function (): Tour<{ message: string | (() => string) }> {
           element: step11,
           message: 'This tooltip is for step 1',
           leave() {
-            if (tourScheduler.context.value.globalMessage) {
-              tourScheduler.context.value.globalMessage++;
+            const { get, set } = tourScheduler.context;
+            const globalMessage = get('globalMessage');
+
+            if (globalMessage !== undefined) {
+              set('globalMessage', globalMessage + 1);
             }
             else {
-              tourScheduler.context.value.globalMessage = 1;
+              set('globalMessage', 1);
             }
           },
         },
@@ -32,8 +35,11 @@ export default function (): Tour<{ message: string | (() => string) }> {
             }];
           },
           message: () => {
+            const { get } = tourScheduler.context;
+            const globalMessage = get('globalMessage');
+
             return `This tooltip is for step 2\nglobalMessage: ${
-              tourScheduler.context.value.globalMessage
+              globalMessage
             }`;
           },
           placement: 'right',
@@ -125,6 +131,7 @@ export default function (): Tour<{ message: string | (() => string) }> {
       overlayOpacity: 0.75,
       onFinish() {
         localStorage.setItem('showTour1', 'false');
+        tourScheduler.context.cleanup('globalMessage');
       },
     },
   );

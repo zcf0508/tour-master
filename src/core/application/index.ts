@@ -16,7 +16,7 @@ export class TourScheduler<
   public config: TourSchedulerConfig<T>;
   // eslint-disable-next-line ts/no-explicit-any
   private tours: Map<T, Tour<any>>;
-  public context: ShallowRef<Partial<CT>>;
+  public context: ReturnType<typeof createContext<CT>>;
 
   constructor(_config: TourSchedulerConfig<T, CT>) {
     this.config = _config;
