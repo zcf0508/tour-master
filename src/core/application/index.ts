@@ -4,7 +4,7 @@ import { createContext } from './context';
 
 interface TourSchedulerConfig<T = string, CT = object> {
   // eslint-disable-next-line ts/no-explicit-any
-  tours: Map<T, Tour<any>>
+  tours: Array<[T, Tour<any>]>
   stateHandler: () => (T | undefined)
   initialContext?: CT
 }
@@ -14,10 +14,13 @@ export class TourScheduler<
   CT extends object = object,
 > {
   public config: TourSchedulerConfig<T>;
+  // eslint-disable-next-line ts/no-explicit-any
+  private tours: Map<T, Tour<any>>;
   public context: ShallowRef<Partial<CT>>;
 
   constructor(_config: TourSchedulerConfig<T, CT>) {
     this.config = _config;
+    this.tours = new Map(_config.tours);
     this.context = createContext(_config.initialContext);
   }
 
@@ -28,7 +31,7 @@ export class TourScheduler<
       return;
     }
 
-    const nextTour = this.config.tours.get(nextTourName);
+    const nextTour = this.tours.get(nextTourName);
     if (!nextTour) {
       return;
     }

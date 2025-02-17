@@ -3,10 +3,10 @@ import createTour1 from './tours/tour1';
 import createTour2 from './tours/tour2';
 
 export const tourScheduler = new TourScheduler({
-  tours: new Map([
+  tours: [
     ['tour1', createTour1()],
     ['tour2', createTour2()],
-  ]),
+  ],
   stateHandler() {
     const showTour1 = localStorage.getItem('showTour1');
 
