@@ -65,7 +65,9 @@ export class Tour<T extends Record<string, unknown> | undefined> {
 
     await lastStep?.leave?.(action);
 
-    if (this.isStopped) { return; } // Prevent further execution if stopped
+    if (this.isStopped) {
+      return;
+    } // Prevent further execution if stopped
 
     this.stepIndex = index;
 
@@ -164,7 +166,10 @@ export class Tour<T extends Record<string, unknown> | undefined> {
   }
 
   public async stop(): Promise<void> {
-    if (this.isStopped) { return; } // Prevent multiple stops
+    if (this.isStopped) {
+      return;
+    } // Prevent multiple stops
+
     this.isStopped = true;
 
     this.destroyDoms?.();
