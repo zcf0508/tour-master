@@ -40,7 +40,8 @@ interface TourConfig<T = undefined> {
 export class Tour<T extends Record<string, unknown> | undefined> {
   private config: TourConfig<T>;
   private stepIndex: number;
-  private destroy?: () => void;
+  private destroyDoms?: () => void;
+  private isStopped: boolean = false; // Add a flag to track if the tour is stopped
 
   constructor(_config: TourConfig<T>) {
     this.config = _config;
@@ -63,6 +64,8 @@ export class Tour<T extends Record<string, unknown> | undefined> {
     const lastStep = this.config.steps[this.stepIndex] as TourStep & T | undefined;
 
     await lastStep?.leave?.(action);
+
+    if (this.isStopped) { return; } // Prevent further execution if stopped
 
     this.stepIndex = index;
 
@@ -130,7 +133,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
       },
     );
 
-    this.destroy = () => {
+    this.destroyDoms = () => {
       destoryOverlay();
       destoryPopover();
     };
@@ -145,16 +148,30 @@ export class Tour<T extends Record<string, unknown> | undefined> {
   }
 
   private async handelFinish(): Promise<void> {
-    this.destroy?.();
-    this.destroy = undefined;
+    this.destroyDoms?.();
+    this.destroyDoms = undefined;
 
     await this.currentStep.leave?.('finish');
     await this.config.onFinish?.();
+
     this.stepIndex = -1;
   }
 
   public async start(): Promise<void> {
+    this.isStopped = false; // Reset the stopped flag
     await this.config.onStart?.();
     await this.showStep(0, 'next');
+  }
+
+  public async stop(): Promise<void> {
+    if (this.isStopped) { return; } // Prevent multiple stops
+    this.isStopped = true;
+
+    this.destroyDoms?.();
+    this.destroyDoms = undefined;
+
+    await this.config.onFinish?.();
+
+    this.stepIndex = -1;
   }
 }

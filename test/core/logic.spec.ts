@@ -164,4 +164,48 @@ describe('tour', () => {
 
     expect(mockLeave).toHaveBeenCalledWith('finish');
   });
+
+  it('stop tour', async () => {
+    const element = document.createElement('div');
+
+    const mockStep2Entry = vi.fn();
+
+    const tour = new Tour({
+      steps: [
+        {
+          stages: () => {
+            const rect = element.getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
+          leave: () => {
+            tour.stop();
+          },
+        },
+        {
+          entry: mockStep2Entry,
+          stages: () => {
+            const rect = element.getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
+        },
+      ],
+      popoverTemplate: mockPopoverTemplate,
+    });
+
+    await tour.start();
+    // @ts-expect-error Trigger next
+    await tour.handelNext();
+
+    expect(mockStep2Entry).not.toHaveBeenCalled();
+  });
 });
