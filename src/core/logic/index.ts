@@ -87,6 +87,10 @@ export class Tour<T extends Record<string, unknown> | undefined> {
 
     await this.currentStep.entry?.(action);
 
+    if (this.isStopped) {
+      return;
+    } // Prevent further execution if stopped
+
     const arrowElRef = ref<HTMLElement>();
 
     const [destoryOverlay, destoryPopover] = await showStep(

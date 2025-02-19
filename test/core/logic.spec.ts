@@ -208,4 +208,35 @@ describe('tour', () => {
 
     expect(mockStep2Entry).not.toHaveBeenCalled();
   });
+
+  it('should stop the tour during entry phase', async () => {
+    const element = document.createElement('div');
+
+    const mockStep1Leave = vi.fn();
+
+    const tour = new Tour({
+      steps: [
+        {
+          stages: () => {
+            const rect = element.getBoundingClientRect();
+            return [{
+              x: rect.x,
+              y: rect.y,
+              width: rect.width,
+              height: rect.height,
+            }];
+          },
+          entry: () => {
+            tour.stop();
+          },
+          leave: mockStep1Leave,
+        },
+      ],
+      popoverTemplate: mockPopoverTemplate,
+    });
+
+    await tour.start();
+
+    expect(mockStep1Leave).not.toHaveBeenCalled();
+  });
 });
