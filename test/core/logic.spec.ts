@@ -239,4 +239,42 @@ describe('tour', () => {
 
     expect(mockStep1Leave).not.toHaveBeenCalled();
   });
+
+  it('onStart', () => {
+    const onStart1 = vi.fn();
+    const onStart2 = vi.fn();
+
+    const tour = new Tour({
+      onStart: onStart1,
+      steps: [],
+      popoverTemplate: mockPopoverTemplate,
+    });
+
+    tour.onStart(onStart2);
+
+    tour.start();
+
+    expect(onStart1).toHaveBeenCalled();
+    expect(onStart2).toHaveBeenCalled();
+  });
+
+  it('onFinish', async () => {
+    const onFinish1 = vi.fn();
+    const onFinish2 = vi.fn();
+
+    const tour = new Tour({
+      onFinish: onFinish1,
+      steps: [],
+      popoverTemplate: mockPopoverTemplate,
+    });
+
+    tour.onFinish(onFinish2);
+
+    await tour.start();
+    // @ts-expect-error Trigger finish by going to next step after last step
+    await tour.handelNext();
+
+    expect(onFinish1).toHaveBeenCalled();
+    expect(onFinish2).toHaveBeenCalled();
+  });
 });

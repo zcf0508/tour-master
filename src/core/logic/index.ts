@@ -43,12 +43,51 @@ export class Tour<T extends Record<string, unknown> | undefined> {
   private destroyDoms?: () => void;
   private isStopped: boolean = false; // Add a flag to track if the tour is stopped
 
+  private onStarts: Array<(() => void) | (() => Promise<void>)> = [];
+  private onFinishs: Array<(() => void) | (() => Promise<void>)> = [];
+
   constructor(_config: TourConfig<T>) {
     this.config = _config;
     this.stepIndex = -1;
+
+    if (this.config.onStart) {
+      this.onStarts.push(this.config.onStart);
+    }
+
+    if (this.config.onFinish) {
+      this.onFinishs.push(this.config.onFinish);
+    }
   }
 
-  private get currentStep(): TourStep & T {
+  private async runOnStarts(): Promise<void> {
+    await Promise.all(this.onStarts.map(fn => fn())).catch(() => {});
+  }
+
+  private async runOnFinishs(): Promise<void> {
+    await Promise.all(this.onFinishs.map(fn => fn())).catch(() => {});
+  }
+
+  public onStart(fn: () => void | Promise<void>): () => void {
+    this.onStarts.push(fn);
+    return () => {
+      const index = this.onStarts.indexOf(fn);
+      if (index > -1) {
+        this.onStarts.splice(index, 1);
+      }
+    };
+  }
+
+  public onFinish(fn: () => void | Promise<void>): () => void {
+    this.onFinishs.push(fn);
+    return () => {
+      const index = this.onFinishs.indexOf(fn);
+      if (index > -1) {
+        this.onFinishs.splice(index, 1);
+      }
+    };
+  }
+
+  private get currentStep(): (TourStep & T) | undefined {
     return this.config.steps[this.stepIndex];
   }
 
@@ -72,7 +111,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
     this.stepIndex = index;
 
     const referenceEl = toValue((() => {
-      const ele = this.currentStep.element;
+      const ele = this.currentStep?.element;
       if (typeof ele === 'string') {
         return document.getElementById(ele) as HTMLElement;
       }
@@ -81,15 +120,19 @@ export class Tour<T extends Record<string, unknown> | undefined> {
       }
     })());
 
-    if (!toValue(this.currentStep.stages)?.length && !referenceEl) {
+    if (!toValue(this.currentStep?.stages)?.length && !referenceEl) {
       throw new Error('At least one stage or a reference element needs to be provided.');
     }
 
-    await this.currentStep.entry?.(action);
+    await this.currentStep?.entry?.(action);
 
     if (this.isStopped) {
       return;
     } // Prevent further execution if stopped
+
+    if (!this.currentStep) {
+      return;
+    }
 
     const arrowElRef = ref<HTMLElement>();
 
@@ -98,7 +141,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
         const handelPre = this.handelPre.bind(this);
         const handelNext = this.handelNext.bind(this);
         const handelFinish = this.handelFinish.bind(this);
-        const currentStep = this.currentStep;
+        const currentStep = this.currentStep!;
         const stepTotal = this.config.steps.length;
         const createPopoverEl = this.config.popoverTemplate(
           handelPre,
@@ -154,18 +197,20 @@ export class Tour<T extends Record<string, unknown> | undefined> {
   }
 
   private async handelFinish(): Promise<void> {
+    this.isStopped = true;
+
     this.destroyDoms?.();
     this.destroyDoms = undefined;
 
-    await this.currentStep.leave?.('finish');
-    await this.config.onFinish?.();
+    await this.currentStep?.leave?.('finish');
+    await this.runOnFinishs();
 
     this.stepIndex = -1;
   }
 
   public async start(): Promise<void> {
     this.isStopped = false; // Reset the stopped flag
-    await this.config.onStart?.();
+    await this.runOnStarts();
     await this.showStep(0, 'next');
   }
 
@@ -179,7 +224,7 @@ export class Tour<T extends Record<string, unknown> | undefined> {
     this.destroyDoms?.();
     this.destroyDoms = undefined;
 
-    await this.config.onFinish?.();
+    await this.runOnFinishs();
 
     this.stepIndex = -1;
   }
