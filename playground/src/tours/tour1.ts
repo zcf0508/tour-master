@@ -12,9 +12,11 @@ export default function (): Tour<{ message: string | (() => string) }> {
         {
           element: step11,
           message: 'This tooltip is for step 1',
-          leave() {
+          leave: async () => {
             const { get, set } = tourScheduler.context;
             const globalMessage = get('globalMessage');
+
+            await tourScheduler.stopTour();
 
             if (globalMessage !== undefined) {
               set('globalMessage', globalMessage + 1);

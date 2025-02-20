@@ -1,4 +1,3 @@
-import type { ShallowRef } from '@vue/reactivity';
 import type { Tour } from '../logic';
 import { createContext } from './context';
 
@@ -17,6 +16,9 @@ export class TourScheduler<
   // eslint-disable-next-line ts/no-explicit-any
   private tours: Map<T, Tour<any>>;
   public context: ReturnType<typeof createContext<CT>>;
+  private currentTourName?: T;
+  // eslint-disable-next-line ts/no-explicit-any
+  private onFinishCallbacks: Map<Tour<any>, () => void> = new Map();
 
   constructor(_config: TourSchedulerConfig<T, CT>) {
     this.config = _config;
@@ -25,7 +27,7 @@ export class TourScheduler<
   }
 
   /** start the next tour */
-  public startTour(): void {
+  public async startTour(): Promise<void> {
     const nextTourName = this.config.stateHandler();
     if (!nextTourName) {
       return;
@@ -36,6 +38,31 @@ export class TourScheduler<
       return;
     }
 
-    nextTour.start();
+    if (!this.onFinishCallbacks.has(nextTour)) {
+      const unregister = nextTour.hook('finish', () => {
+        this.currentTourName = undefined;
+      });
+      this.onFinishCallbacks.set(nextTour, unregister);
+    }
+    this.currentTourName = nextTourName;
+
+    await nextTour.start();
+  }
+
+  /** stop the current tour */
+  public async stopTour(): Promise<void> {
+    if (!this.currentTourName) {
+      return;
+    }
+
+    const currentTour = this.tours.get(this.currentTourName);
+    if (!currentTour) {
+      return;
+    }
+
+    await currentTour.stop();
+
+    this.currentTourName = undefined;
+    this.onFinishCallbacks.delete(currentTour);
   }
 }
