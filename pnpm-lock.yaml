@@ -39,6 +39,9 @@ importers:
       '@types/node':
         specifier: ^22.13.1
         version: 22.13.1
+      hookable:
+        specifier: ^5.5.3
+        version: 5.5.3
       lodash-es:
         specifier: ^4.17.21
         version: 4.17.21

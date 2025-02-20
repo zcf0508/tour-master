@@ -1,5 +1,6 @@
 import type { PopoverTemplate } from '../../src/core/logic';
 import { toValue } from '@vue/reactivity';
+import { createDebugger } from 'hookable';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Tour } from '../../src/core/logic';
 
@@ -240,7 +241,7 @@ describe('tour', () => {
     expect(mockStep1Leave).not.toHaveBeenCalled();
   });
 
-  it('onStart', () => {
+  it('onStart', async () => {
     const onStart1 = vi.fn();
     const onStart2 = vi.fn();
 
@@ -250,9 +251,9 @@ describe('tour', () => {
       popoverTemplate: mockPopoverTemplate,
     });
 
-    tour.onStart(onStart2);
+    tour.hook('start', onStart2);
 
-    tour.start();
+    await tour.start();
 
     expect(onStart1).toHaveBeenCalled();
     expect(onStart2).toHaveBeenCalled();
@@ -268,7 +269,7 @@ describe('tour', () => {
       popoverTemplate: mockPopoverTemplate,
     });
 
-    tour.onFinish(onFinish2);
+    tour.hook('finish', onFinish2);
 
     await tour.start();
     // @ts-expect-error Trigger finish by going to next step after last step

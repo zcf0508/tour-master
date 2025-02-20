@@ -1,7 +1,9 @@
 import type { Placement } from '@floating-ui/dom';
+import type { HookCallback } from 'hookable';
 import type { StageDefinition } from '../renderer/overlay';
 import type { PopoverArrowPositionedHandler } from '../renderer/popover';
 import { ref, toValue } from '@vue/reactivity';
+import { Hookable } from 'hookable';
 import { showStep } from '../renderer';
 
 interface TourStep {
@@ -37,54 +39,36 @@ interface TourConfig<T = undefined> {
   onFinish?: (() => void) | (() => Promise<void>)
 }
 
-export class Tour<T extends Record<string, unknown> | undefined> {
+export class Tour<T extends Record<string, unknown> | undefined> extends Hookable<{
+  start: HookCallback
+  finish: HookCallback
+}> {
   private config: TourConfig<T>;
   private stepIndex: number;
   private destroyDoms?: () => void;
   private isStopped: boolean = false; // Add a flag to track if the tour is stopped
 
-  private onStarts: Array<(() => void) | (() => Promise<void>)> = [];
-  private onFinishs: Array<(() => void) | (() => Promise<void>)> = [];
-
   constructor(_config: TourConfig<T>) {
+    super();
+
     this.config = _config;
     this.stepIndex = -1;
 
     if (this.config.onStart) {
-      this.onStarts.push(this.config.onStart);
+      this.hook('start', this.config.onStart);
     }
 
     if (this.config.onFinish) {
-      this.onFinishs.push(this.config.onFinish);
+      this.hook('finish', this.config.onFinish);
     }
   }
 
   private async runOnStarts(): Promise<void> {
-    await Promise.all(this.onStarts.map(fn => fn())).catch(() => {});
+    await this.callHook('start');
   }
 
   private async runOnFinishs(): Promise<void> {
-    await Promise.all(this.onFinishs.map(fn => fn())).catch(() => {});
-  }
-
-  public onStart(fn: () => void | Promise<void>): () => void {
-    this.onStarts.push(fn);
-    return () => {
-      const index = this.onStarts.indexOf(fn);
-      if (index > -1) {
-        this.onStarts.splice(index, 1);
-      }
-    };
-  }
-
-  public onFinish(fn: () => void | Promise<void>): () => void {
-    this.onFinishs.push(fn);
-    return () => {
-      const index = this.onFinishs.indexOf(fn);
-      if (index > -1) {
-        this.onFinishs.splice(index, 1);
-      }
-    };
+    await this.callHook('finish');
   }
 
   private get currentStep(): (TourStep & T) | undefined {
