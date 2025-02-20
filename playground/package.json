@@ -1,9 +1,12 @@
 {
   "name": "playground",
+  "type": "module",
   "scripts": {
-    "dev": "vite --port 5974"
+    "dev": "concurrently --names build,server -c magenta,blue 'vite build --watch' 'http-server ./dist -p 5974' "
   },
   "devDependencies": {
+    "concurrently": "^9.1.0",
+    "http-server": "^14.1.1",
     "vite": "^6.1.0"
   }
 }
