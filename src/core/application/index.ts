@@ -4,7 +4,7 @@ import { createContext } from './context';
 interface TourSchedulerConfig<T = string, CT = object> {
   // eslint-disable-next-line ts/no-explicit-any
   tours: Array<[T, Tour<any>]>
-  stateHandler: () => (T | undefined)
+  stateHandler: () => (Promise<(T | undefined)> | (T | undefined))
   initialContext?: CT
 }
 
@@ -28,7 +28,7 @@ export class TourScheduler<
 
   /** start the next tour */
   public async startTour(): Promise<void> {
-    const nextTourName = this.config.stateHandler();
+    const nextTourName = await this.config.stateHandler();
     if (!nextTourName) {
       return;
     }
