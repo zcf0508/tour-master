@@ -39,17 +39,15 @@
     "@vue/reactivity": "^3.3.0",
     "@vueuse/shared": "^9.2.0"
   },
-  "dependencies": {
-    "@antfu/eslint-config": "^4.1.1",
-    "bumpp": "^10.0.2",
-    "eslint": "^9.20.0",
-    "jsdom": "^26.0.0"
-  },
   "devDependencies": {
+    "@antfu/eslint-config": "^4.1.1",
     "@antfu/utils": "^8.1.0",
     "@types/lodash-es": "^4.17.12",
     "@types/node": "^22.13.1",
+    "bumpp": "^10.0.2",
+    "eslint": "^9.20.0",
     "hookable": "^5.5.3",
+    "jsdom": "^26.0.0",
     "lodash-es": "^4.17.21",
     "typescript": "^5.7.3",
     "unbuild": "^3.5.0",
