@@ -94,6 +94,8 @@ export class Tour<T extends Record<string, unknown> | undefined> extends Hookabl
 
     this.stepIndex = index;
 
+    await this.currentStep?.entry?.(action);
+
     const referenceEl = toValue((() => {
       const ele = this.currentStep?.element;
       if (typeof ele === 'string') {
@@ -107,8 +109,6 @@ export class Tour<T extends Record<string, unknown> | undefined> extends Hookabl
     if (!toValue(this.currentStep?.stages)?.length && !referenceEl) {
       throw new Error('At least one stage or a reference element needs to be provided.');
     }
-
-    await this.currentStep?.entry?.(action);
 
     if (this.isStopped) {
       return;
