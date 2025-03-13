@@ -1,15 +1,7 @@
 import { toValue } from '@vue/reactivity';
-import { afterAll, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createOverlaySvg, transitionStage } from '../../src/core/renderer/overlay';
-import { useGlobalState } from '../../src/store';
-
-afterAll(() => {
-  const state = useGlobalState();
-
-  state.overlayDom.value = undefined;
-  state.currentStages.value = undefined;
-  state.popoverContext.value = undefined;
-});
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { createOverlaySvg, transitionStage } from '../../../src/core/renderer/overlay';
+import { useGlobalState } from '../../../src/store';
 
 describe('overlay', () => {
   beforeEach(() => {

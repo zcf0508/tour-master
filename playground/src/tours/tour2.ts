@@ -33,6 +33,7 @@ export default function (): Tour<{ message: string }> {
           }];
         },
         message: 'This tooltip is for step 2',
+        hideOverlay: true,
       },
     ],
     popoverTemplate: (pre, next, finish, currentStep, currentStepIndex) => {

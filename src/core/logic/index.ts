@@ -12,6 +12,8 @@ interface TourStep {
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
   placement?: Placement
+  /** default: false */
+  hideOverlay?: boolean
 }
 
 type BindArrowEl = ((arrowEl: HTMLElement) => void);
@@ -163,6 +165,7 @@ export class Tour<T extends Record<string, unknown> | undefined> extends Hookabl
         placement: this.currentStep.placement,
         zIndex: this.config.zIndex,
         overlayOpacity: this.config.overlayOpacity,
+        hideOverlay: this.currentStep.hideOverlay,
       },
     );
 

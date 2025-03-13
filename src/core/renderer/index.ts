@@ -18,6 +18,8 @@ export async function showStep(
     overlayOpacity: number
     placement: Placement
     zIndex: number
+    /** default: false */
+    hideOverlay?: boolean
   }>,
 ): Promise<[() => void, () => void]> {
   const {
@@ -28,6 +30,7 @@ export async function showStep(
     overlayOpacity,
     placement = 'bottom',
     zIndex = 10000,
+    hideOverlay = false,
   } = options || {};
 
   const state = useGlobalState();
@@ -67,35 +70,40 @@ export async function showStep(
 
   // ---
 
-  if (!state.overlayDom.value) {
-    const overlaySvg = createOverlaySvg(
-      stages,
-      {
-        stagePadding: 4,
-        stageRadius: 4,
-        zIndex,
-        overlayOpacity,
-      },
-    );
-
-    document.body.appendChild(overlaySvg);
-
-    state.overlayDom.value = overlaySvg;
-  }
-  else {
-    await transitionStage(
-      stages,
-      {
-        stagePadding: 4,
-        stageRadius: 4,
-      },
-    );
-  }
-
   const destoryOverlay: () => void = () => {
     state.overlayDom.value?.remove();
     state.overlayDom.value = undefined;
   };
+
+  if (hideOverlay) {
+    destoryOverlay();
+  }
+  else {
+    if (!state.overlayDom.value) {
+      const overlaySvg = createOverlaySvg(
+        stages,
+        {
+          stagePadding: 4,
+          stageRadius: 4,
+          zIndex,
+          overlayOpacity,
+        },
+      );
+
+      document.body.appendChild(overlaySvg);
+
+      state.overlayDom.value = overlaySvg;
+    }
+    else {
+      await transitionStage(
+        stages,
+        {
+          stagePadding: 4,
+          stageRadius: 4,
+        },
+      );
+    }
+  }
 
   return [
     destoryOverlay,
