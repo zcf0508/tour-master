@@ -20,7 +20,7 @@ export class TourScheduler<
   // eslint-disable-next-line ts/no-explicit-any
   private _tourInstances: Map<T, Tour<any>> = new Map();
   public context: ReturnType<typeof createContext<CT>>;
-  private currentTourName?: T;
+  public currentTourName?: T;
   // eslint-disable-next-line ts/no-explicit-any
   private onFinishCallbacks: Map<Tour<any>, () => void> = new Map();
 
