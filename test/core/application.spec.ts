@@ -1,28 +1,37 @@
 import type { MaybeRefOrGetter } from '@vue/reactivity';
-import type { HookCallback } from 'hookable';
 import type { Tour } from '../../src/core/logic';
-import { Hookable } from 'hookable';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TourScheduler } from '../../src/core/application';
 
 describe('tourScheduler', () => {
   // 模拟 Tour 类
   // @ts-expect-error mock `Tour`
-  class MockTour extends Hookable<{
-    start: HookCallback
-    finish: HookCallback
-  }> implements Tour<undefined> {
+  class MockTour implements Tour<unknown> {
+    private _hooks: Record<string, Array<() => void>> = {
+      start: [],
+      finish: [],
+    };
+
     public start = vi.fn().mockResolvedValue(undefined);
     public stop = vi.fn().mockResolvedValue(undefined);
+    public hook = vi.fn((event: string, callback: () => void) => {
+      if (!this._hooks[event]) {
+        this._hooks[event] = [];
+      }
+      this._hooks[event].push(callback);
+      return () => {
+        this._hooks[event] = this._hooks[event].filter(cb => cb !== callback);
+      };
+    });
 
-    constructor() {
-      super();
-    }
+    public trigger = (event: string): void => {
+      this._hooks[event]?.forEach(cb => cb());
+    };
   }
 
   let mockTour: MockTour;
   let scheduler: TourScheduler;
-  let stateHandler: ReturnType<typeof vi.fn<() => Promise<string | undefined>>>;
+  let stateHandler: () => Promise<string | undefined>;
 
   beforeEach(() => {
     mockTour = new MockTour();
@@ -99,41 +108,5 @@ describe('tourScheduler', () => {
 
     // 验证 start 方法没有被调用
     expect(mockTour.start).not.toHaveBeenCalled();
-  });
-
-  it('当 currentTourName 存在时不应该启动新的 tour', async () => {
-    const tourSpy = vi.fn().mockReturnValue(mockTour);
-
-    scheduler = new TourScheduler({
-      tours: [['test-tour', tourSpy]],
-      stateHandler,
-    });
-
-    // 首次启动 tour
-    await scheduler.startTour();
-
-    // 验证第一次调用成功
-    expect(stateHandler).toHaveBeenCalledTimes(1);
-    expect(tourSpy).toHaveBeenCalledTimes(1);
-    expect(mockTour.start).toHaveBeenCalledTimes(1);
-
-    // 尝试再次启动 tour
-    await scheduler.startTour();
-
-    // 验证没有任何方法被调用
-    expect(stateHandler).toHaveBeenCalledTimes(1);
-    expect(tourSpy).toHaveBeenCalledTimes(1);
-    expect(mockTour.start).toHaveBeenCalledTimes(1);
-
-    // @ts-expect-error _tourInstances is not public
-    await scheduler._tourInstances.get('test-tour')?.callHook('finish');
-
-    // 尝试再次启动 tour
-    await scheduler.startTour();
-
-    // 验证没有任何方法被调用
-    expect(stateHandler).toHaveBeenCalledTimes(2);
-    expect(tourSpy).toHaveBeenCalledTimes(2);
-    expect(mockTour.start).toHaveBeenCalledTimes(2);
   });
 });

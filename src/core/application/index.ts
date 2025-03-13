@@ -32,10 +32,6 @@ export class TourScheduler<
 
   /** start the next tour */
   public async startTour(): Promise<void> {
-    if (this.currentTourName) {
-      return;
-    }
-
     const nextTourName = await this.config.stateHandler();
     if (!nextTourName) {
       return;
