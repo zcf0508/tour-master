@@ -41,7 +41,7 @@ interface TourConfig<T = undefined> {
   onFinish?: (() => void) | (() => Promise<void>)
 }
 
-export class Tour<T extends Record<string, unknown> | undefined> extends Hookable<{
+export class Tour<T extends object | undefined> extends Hookable<{
   start: HookCallback
   finish: HookCallback
 }> {
@@ -50,10 +50,10 @@ export class Tour<T extends Record<string, unknown> | undefined> extends Hookabl
   private destroyDoms?: () => void;
   private isStopped: boolean = false; // Add a flag to track if the tour is stopped
 
-  constructor(_config: TourConfig<T>) {
+  constructor(_config: TourConfig<T extends { length: number } ? never : T>) {
     super();
 
-    this.config = _config;
+    this.config = _config as unknown as TourConfig<T>;
     this.stepIndex = -1;
 
     if (this.config.onStart) {
