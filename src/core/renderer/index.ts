@@ -110,3 +110,5 @@ export async function showStep(
     destoryPopover,
   ];
 }
+
+export type { PopoverArrowPositionedHandler };
