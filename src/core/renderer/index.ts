@@ -9,7 +9,7 @@ import { showPopover } from './popover';
 
 export async function showStep(
   createPopoverEl: () => MaybeRef<HTMLElement>,
-  stages: StageDefinition[] | (() => StageDefinition[]),
+  stages: StageDefinition[] | (() => StageDefinition[]) | undefined,
   options?: Partial<{
     arrowElRef?: Ref<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
@@ -41,20 +41,24 @@ export async function showStep(
     state.popoverContext.value[1]();
   }
 
-  const [popoverEl, destoryPopover] = showPopover(
-    {
-      getBoundingClientRect: () => {
-        const stage = toValue(stages)[0]!;
+  const stagesVal = toValue(stages);
 
-        return {
-          ...stage,
-          top: stage.y,
-          bottom: stage.y + stage.height,
-          left: stage.x,
-          right: stage.x + stage.width,
-        };
-      },
-    },
+  const [popoverEl, destoryPopover] = showPopover(
+    stagesVal?.length
+      ? {
+        getBoundingClientRect: () => {
+          const stage = stagesVal[0]!;
+
+          return {
+            ...stage,
+            top: stage.y,
+            bottom: stage.y + stage.height,
+            left: stage.x,
+            right: stage.x + stage.width,
+          };
+        },
+      }
+      : undefined,
     createPopoverEl,
     {
       arrowElRef,
@@ -81,7 +85,7 @@ export async function showStep(
   else {
     if (!state.overlayDom.value) {
       const overlaySvg = createOverlaySvg(
-        stages,
+        stagesVal ?? [],
         {
           stagePadding: 4,
           stageRadius: 4,
@@ -96,7 +100,7 @@ export async function showStep(
     }
     else {
       await transitionStage(
-        stages,
+        stagesVal ?? [],
         {
           stagePadding: 4,
           stageRadius: 4,

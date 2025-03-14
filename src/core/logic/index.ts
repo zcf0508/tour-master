@@ -108,10 +108,6 @@ export class Tour<T extends object | undefined> extends Hookable<{
       }
     })());
 
-    if (!toValue(this.currentStep?.stages)?.length && !referenceEl) {
-      throw new Error('At least one stage or a reference element needs to be provided.');
-    }
-
     if (this.isStopped) {
       return;
     } // Prevent further execution if stopped
@@ -141,22 +137,20 @@ export class Tour<T extends object | undefined> extends Hookable<{
           arrowElRef.value = arrowEl;
         });
       },
-      this.currentStep.stages ?? (() => {
-        if (!referenceEl) {
-          return [];
+      referenceEl
+        ? () => {
+          const referenceElRect = referenceEl.getBoundingClientRect();
+
+          return [
+            {
+              x: referenceElRect.x,
+              y: referenceElRect.y,
+              width: referenceElRect.width,
+              height: referenceElRect.height,
+            },
+          ];
         }
-
-        const referenceElRect = referenceEl.getBoundingClientRect();
-
-        return [
-          {
-            x: referenceElRect.x,
-            y: referenceElRect.y,
-            width: referenceElRect.width,
-            height: referenceElRect.height,
-          },
-        ];
-      }),
+        : this.currentStep.stages,
       {
         arrowElRef,
         popoverArrowPositioned: this.config.popoverArrowPositioned,
