@@ -13,14 +13,23 @@ export function createContext<
 
   return {
     set: (key, value) => {
-      ctx.value[key] = value;
+      ctx.value = {
+        ...ctx.value,
+        [key]: value,
+      };
       return () => {
-        ctx.value[key] = undefined;
+        ctx.value = {
+          ...ctx.value,
+          [key]: undefined,
+        };
       };
     },
     cleanup: (key) => {
       if (key) {
-        ctx.value[key] = undefined;
+        ctx.value = {
+          ...ctx.value,
+          [key]: undefined,
+        };
       }
       else {
         ctx.value = {};
