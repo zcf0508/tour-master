@@ -35,6 +35,7 @@ interface TourConfig<T = undefined> {
   popoverPadding?: number
   zIndex?: number
   overlayOpacity?: number
+  arrowPadding?: number
   /** call before start */
   onStart?: (() => void) | (() => Promise<void>)
   /** call after finish */
@@ -160,6 +161,7 @@ export class Tour<T extends object | undefined> extends Hookable<{
         zIndex: this.config.zIndex,
         overlayOpacity: this.config.overlayOpacity,
         hideOverlay: this.currentStep.hideOverlay,
+        arrowPadding: this.config.arrowPadding,
       },
     );
 

@@ -20,6 +20,7 @@ export async function showStep(
     zIndex: number
     /** default: false */
     hideOverlay?: boolean
+    arrowPadding?: number
   }>,
 ): Promise<[() => void, () => void]> {
   const {
@@ -31,6 +32,7 @@ export async function showStep(
     placement = 'bottom',
     zIndex = 10000,
     hideOverlay = false,
+    arrowPadding,
   } = options || {};
 
   const state = useGlobalState();
@@ -67,6 +69,7 @@ export async function showStep(
       popoverPadding,
       placement,
       zIndex: zIndex + 1,
+      arrowPadding,
     },
   );
 

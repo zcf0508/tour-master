@@ -36,6 +36,7 @@ function updatePosition(
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
     popoverOffset?: number
+    arrowPadding?: number
   }>,
 ): void {
   const {
@@ -44,6 +45,7 @@ function updatePosition(
     popoverArrowPositioned,
     popoverPadding = 4,
     popoverOffset = 8,
+    arrowPadding,
   } = options ?? {};
 
   const unrefedReferenceEl = unref(referenceEl);
@@ -70,7 +72,12 @@ function updatePosition(
         offset(popoverOffset),
         ...(
           unref(arrowElRef)
-            ? [arrow({ element: unref(arrowElRef)! })]
+            ? [
+              arrow({
+                element: unref(arrowElRef)!,
+                padding: arrowPadding,
+              }),
+            ]
             : []
         ),
       ],
@@ -101,6 +108,7 @@ export function showPopover(
     popoverOffset?: number
     placement: Placement
     zIndex: number
+    arrowPadding?: number
   }>,
 ): [HTMLElement, () => void] {
   const {
@@ -109,6 +117,7 @@ export function showPopover(
     popoverPadding,
     popoverOffset,
     placement = 'bottom',
+    arrowPadding,
   } = options || {};
 
   const popoverEl = createPopoverEl();
@@ -132,6 +141,7 @@ export function showPopover(
         popoverArrowPositioned,
         popoverPadding,
         popoverOffset,
+        arrowPadding,
       }),
     );
   }
