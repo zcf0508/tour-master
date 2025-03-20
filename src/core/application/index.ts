@@ -6,7 +6,7 @@ import { createContext } from './context';
 interface TourSchedulerConfig<T = string, CT = object> {
   // eslint-disable-next-line ts/no-explicit-any
   tours: Array<[T, MaybeRefOrGetter<Tour<any>>]>
-  stateHandler: () => (Promise<(T | undefined)> | (T | undefined))
+  stateHandler: () => (Promise<(NoInfer<T> | undefined)> | (NoInfer<T> | undefined))
   initialContext?: CT
 }
 
