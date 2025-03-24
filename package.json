@@ -39,6 +39,11 @@
     "@vue/reactivity": "^3.3.0",
     "@vueuse/shared": "^9.2.0"
   },
+  "dependencies": {
+    "@floating-ui/dom": "^1.6.13",
+    "@vue/reactivity": "^3.3.0",
+    "@vueuse/shared": "^9.2.0"
+  },
   "devDependencies": {
     "@antfu/eslint-config": "^4.1.1",
     "@antfu/utils": "^8.1.0",
