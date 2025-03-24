@@ -108,7 +108,7 @@ export class Tour<T extends object | undefined> extends Hookable<{
       if (typeof ele === 'string') {
         const element = document.querySelector(ele);
         if (!element) {
-          console.error(`Element ${ele} not found`);
+          console.error(`Element ${ele} not found in step ${this.stepIndex}`);
           return;
         }
         return element;
