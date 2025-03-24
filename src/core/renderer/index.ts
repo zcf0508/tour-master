@@ -1,4 +1,4 @@
-import type { Placement } from '@floating-ui/dom';
+import type { Placement, ReferenceElement } from '@floating-ui/dom';
 import type { MaybeRef, Ref } from '@vue/reactivity';
 import type { StageDefinition } from './overlay';
 import type { PopoverArrowPositionedHandler } from './popover';
@@ -9,7 +9,8 @@ import { showPopover } from './popover';
 
 export async function showStep(
   createPopoverEl: () => MaybeRef<HTMLElement>,
-  stages: StageDefinition[] | (() => StageDefinition[]) | undefined,
+  element?: ReferenceElement | (() => ReferenceElement),
+  stages?: StageDefinition[] | (() => StageDefinition[]),
   options?: Partial<{
     arrowElRef?: Ref<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
@@ -46,7 +47,7 @@ export async function showStep(
   const stagesVal = toValue(stages);
 
   const [popoverEl, destoryPopover] = showPopover(
-    stagesVal?.length
+    toValue(element) ?? (stagesVal?.length
       ? {
         getBoundingClientRect: () => {
           const stage = stagesVal[0]!;
@@ -60,7 +61,7 @@ export async function showStep(
           };
         },
       }
-      : undefined,
+      : undefined),
     createPopoverEl,
     {
       arrowElRef,
@@ -88,7 +89,7 @@ export async function showStep(
   else {
     if (!state.overlayDom.value) {
       const overlaySvg = createOverlaySvg(
-        stagesVal ?? [],
+        stages || [],
         {
           stagePadding: 4,
           stageRadius: 4,
@@ -103,7 +104,7 @@ export async function showStep(
     }
     else {
       await transitionStage(
-        stagesVal ?? [],
+        stages || [],
         {
           stagePadding: 4,
           stageRadius: 4,

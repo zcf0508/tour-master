@@ -83,6 +83,7 @@ describe('step', () => {
     // 调用showStep
     const [destroyOverlay, destroyPopover] = await showStep(
       createPopoverEl,
+      undefined,
       stages,
     );
 
@@ -140,6 +141,7 @@ describe('step', () => {
     // 调用showStep，使用自定义选项
     await showStep(
       createPopoverEl,
+      undefined,
       stages,
       {
         arrowElRef: mockArrowElRef,
@@ -208,6 +210,7 @@ describe('step', () => {
     // 调用showStep，hideOverlay为true
     await showStep(
       createPopoverEl,
+      undefined,
       stages,
       {
         hideOverlay: true,
@@ -247,6 +250,7 @@ describe('step', () => {
     // 调用showStep
     await showStep(
       createPopoverEl,
+      undefined,
       stages,
     );
 
@@ -293,6 +297,7 @@ describe('step', () => {
     // 调用showStep
     await showStep(
       createPopoverEl,
+      undefined,
       stages,
     );
 

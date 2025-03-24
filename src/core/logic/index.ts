@@ -1,4 +1,4 @@
-import type { Placement } from '@floating-ui/dom';
+import type { Placement, ReferenceElement } from '@floating-ui/dom';
 import type { HookCallback } from 'hookable';
 import type { StageDefinition } from '../renderer/overlay';
 import type { PopoverArrowPositionedHandler } from '../renderer/popover';
@@ -7,7 +7,7 @@ import { Hookable } from 'hookable';
 import { showStep } from '../renderer';
 
 interface TourStep {
-  element?: string | HTMLElement | (() => HTMLElement)
+  element?: string | ReferenceElement | (() => ReferenceElement)
   stages?: StageDefinition[] | (() => StageDefinition[])
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
@@ -142,10 +142,10 @@ export class Tour<T extends object | undefined> extends Hookable<{
           arrowElRef.value = arrowEl;
         });
       },
+      referenceEl,
       referenceEl
         ? () => {
           const referenceElRect = referenceEl.getBoundingClientRect();
-
           return [
             {
               x: referenceElRect.x,

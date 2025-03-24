@@ -12,6 +12,10 @@ const createStore = createGlobalState(() => {
     refreshOverlay();
   });
 
+  window.addEventListener('scroll', () => {
+    refreshOverlay();
+  });
+
   const popoverContext = ref<ReturnType<typeof showPopover>>();
 
   return {
