@@ -36,6 +36,10 @@ interface TourConfig<T = undefined> {
   zIndex?: number
   overlayOpacity?: number
   arrowPadding?: number
+  /**
+   * If set, the tour will only show once.
+   */
+  storageKey?: string
   /** call before start */
   onStart?: (() => void) | (() => Promise<void>)
   /** call after finish */
@@ -192,6 +196,14 @@ export class Tour<T extends object | undefined> extends Hookable<{
   }
 
   public async start(): Promise<void> {
+    if (this.config.storageKey) {
+      if (localStorage.getItem(this.config.storageKey) === 'true') {
+        return;
+      }
+
+      localStorage.setItem(this.config.storageKey, 'true');
+    }
+
     this.isStopped = false; // Reset the stopped flag
     await this.runOnStarts();
     await this.showStep(0, 'next');

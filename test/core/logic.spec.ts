@@ -278,4 +278,25 @@ describe('tour', () => {
     expect(onFinish1).toHaveBeenCalled();
     expect(onFinish2).toHaveBeenCalled();
   });
+
+  it('storageKey', async () => {
+    const onStart = vi.fn();
+
+    const tour = new Tour({
+      storageKey: 'tour',
+      steps: [],
+      popoverTemplate: mockPopoverTemplate,
+      onStart,
+    });
+
+    await tour.start();
+
+    expect(localStorage.getItem('tour')).toBe('true');
+
+    expect(onStart).toBeCalledTimes(1);
+
+    await tour.start();
+
+    expect(onStart).toBeCalledTimes(1);
+  });
 });
