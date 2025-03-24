@@ -18,14 +18,14 @@ interface TourStep {
 
 type BindArrowEl = ((arrowEl: HTMLElement) => void);
 
-export type PopoverTemplate<T> = (
-  pre: () => void,
-  next: () => void,
-  finish: () => void,
-  currentStep: TourStep & T,
-  currentStepIndex: number,
-  stepTotal: number,
-) => ((bindArrowEl: BindArrowEl) => HTMLElement);
+export type PopoverTemplate<T> = (_: {
+  pre: () => void
+  next: () => void
+  finish: () => void
+  currentStep: TourStep & T
+  currentStepIndex: number
+  stepTotal: number
+}) => ((bindArrowEl: BindArrowEl) => HTMLElement);
 
 interface TourConfig<T = undefined> {
   steps: Array<TourStep & T>
@@ -130,14 +130,14 @@ export class Tour<T extends object | undefined> extends Hookable<{
         const handelFinish = this.handelFinish.bind(this);
         const currentStep = this.currentStep!;
         const stepTotal = this.config.steps.length;
-        const createPopoverEl = this.config.popoverTemplate(
-          handelPre,
-          handelNext,
-          handelFinish,
+        const createPopoverEl = this.config.popoverTemplate({
+          pre: handelPre,
+          next: handelNext,
+          finish: handelFinish,
           currentStep,
-          index,
+          currentStepIndex: index,
           stepTotal,
-        );
+        });
         return createPopoverEl((arrowEl: HTMLElement) => {
           arrowElRef.value = arrowEl;
         });

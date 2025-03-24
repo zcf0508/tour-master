@@ -36,7 +36,7 @@ export default function (): Tour<{ message: string }> {
         hideOverlay: true,
       },
     ],
-    popoverTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+    popoverTemplate: ({ pre, next, finish, currentStep, currentStepIndex }) => {
       return () => {
         const tooltipEl = document.createElement('div') as HTMLElement;
         tooltipEl.innerHTML = `<div>

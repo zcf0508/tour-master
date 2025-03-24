@@ -47,7 +47,7 @@ export default function (): Tour<{ message: string | (() => string) }> {
           placement: 'right',
         },
       ],
-      popoverTemplate: (pre, next, finish, currentStep, currentStepIndex) => {
+      popoverTemplate: ({ pre, next, finish, currentStep, currentStepIndex }) => {
         return (bindArrowEl) => {
           const tooltipEl = document.createElement('div') as HTMLElement;
           tooltipEl.innerHTML = `<div id="arrow" style="position: absolute"></div>

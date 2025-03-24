@@ -49,7 +49,7 @@ const tour = new Tour({
       },
     },
   ],
-  popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
+  popoverTemplate: ({ pre, next, finish, currentStep, currentStepIndex, stepTotal }) => {
     // Return a function that creates and returns your popover element
     return (bindArrowEl) => {
       const el = document.createElement('div');
@@ -105,7 +105,7 @@ import { defineComponent, h, render } from 'vue';
 
 const tour = new Tour({
   // ... other config
-  popoverTemplate: (pre, next, finish, currentStep, currentStepIndex, stepTotal) => {
+  popoverTemplate: ({ pre, next, finish, currentStep, currentStepIndex, stepTotal }) => {
     return (bindArrowEl) => {
       const component = defineComponent({
         setup() {
