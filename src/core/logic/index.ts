@@ -106,7 +106,7 @@ export class Tour<T extends object | undefined> extends Hookable<{
     const referenceEl = toValue((() => {
       const ele = this.currentStep?.element;
       if (typeof ele === 'string') {
-        return document.getElementById(ele) as HTMLElement;
+        return document.querySelector(ele) as HTMLElement;
       }
       else {
         return ele;
