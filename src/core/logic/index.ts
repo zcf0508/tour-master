@@ -40,6 +40,12 @@ interface TourConfig<T = undefined> {
    * If set, the tour will only show once.
    */
   storageKey?: string
+  /**
+   * If set, the tour will lock the scroll.
+   *
+   * @default false
+   */
+  lockScroll?: boolean
   /** call before start */
   onStart?: (() => void) | (() => Promise<void>)
   /** call after finish */
@@ -67,6 +73,17 @@ export class Tour<T extends object | undefined> extends Hookable<{
 
     if (this.config.onFinish) {
       this.hook('finish', this.config.onFinish);
+    }
+
+    if (this.config.lockScroll) {
+      const oldOverflow = document.body.style.overflow;
+
+      this.hook('start', () => {
+        document.body.style.overflow = 'hidden';
+      });
+      this.hook('finish', () => {
+        document.body.style.overflow = oldOverflow;
+      });
     }
   }
 
