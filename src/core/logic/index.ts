@@ -14,6 +14,9 @@ interface TourStep {
   placement?: Placement
   /** default: false */
   hideOverlay?: boolean
+  offset?: number
+  padding?: number
+  arrowPadding?: number
 }
 
 type BindArrowEl = ((arrowEl: HTMLElement) => void);
@@ -181,13 +184,13 @@ export class Tour<T extends object | undefined> extends Hookable<{
       {
         arrowElRef,
         popoverArrowPositioned: this.config.popoverArrowPositioned,
-        popoverOffset: this.config.popoverOffset,
-        popoverPadding: this.config.popoverPadding,
+        popoverOffset: this.currentStep?.offset ?? this.config.popoverOffset,
+        popoverPadding: this.currentStep?.padding ?? this.config.popoverPadding,
         placement: this.currentStep.placement,
         zIndex: this.config.zIndex,
         overlayOpacity: this.config.overlayOpacity,
         hideOverlay: this.currentStep.hideOverlay,
-        arrowPadding: this.config.arrowPadding,
+        arrowPadding: this.currentStep?.arrowPadding ?? this.config.arrowPadding,
       },
     );
 

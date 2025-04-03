@@ -81,6 +81,21 @@ interface TourConfig<T = undefined> {
   popoverPadding?: number
   zIndex?: number
   overlayOpacity?: number
+  arrowPadding?: number
+  /**
+   * If set, the tour will only show once.
+   */
+  storageKey?: string
+  /**
+   * If set, the tour will lock the scroll.
+   *
+   * @default false
+   */
+  lockScroll?: boolean
+  /** call before start */
+  onStart?: (() => void) | (() => Promise<void>)
+  /** call after finish */
+  onFinish?: (() => void) | (() => Promise<void>)
 }
 ```
 
@@ -88,11 +103,16 @@ interface TourConfig<T = undefined> {
 
 ```typescript
 interface TourStep {
-  element: string | HTMLElement | (() => HTMLElement)
+  element?: string | ReferenceElement | (() => ReferenceElement)
   stages?: StageDefinition[] | (() => StageDefinition[])
   entry?: (action: 'pre' | 'next') => void | Promise<void>
   leave?: (action: 'pre' | 'next' | 'finish') => void | Promise<void>
   placement?: Placement
+  /** default: false */
+  hideOverlay?: boolean
+  offset?: number
+  padding?: number
+  arrowPadding?: number
 }
 ```
 

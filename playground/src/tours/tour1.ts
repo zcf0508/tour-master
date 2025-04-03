@@ -25,6 +25,7 @@ export default function (): Tour<{ message: string | (() => string) }> {
               set('globalMessage', 1);
             }
           },
+          offset: 40,
         },
         {
           stages: () => {
