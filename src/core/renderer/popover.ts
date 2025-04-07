@@ -1,4 +1,4 @@
-import type { MiddlewareData, Placement, ReferenceElement } from '@floating-ui/dom';
+import type { MiddlewareData, OffsetOptions, Placement, ReferenceElement } from '@floating-ui/dom';
 import type { MaybeRef, Ref } from '@vue/reactivity';
 import {
   arrow,
@@ -35,7 +35,7 @@ function updatePosition(
     arrowElRef?: Ref<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
-    popoverOffset?: number
+    popoverOffset?: OffsetOptions
     arrowPadding?: number
   }>,
 ): void {
@@ -105,7 +105,7 @@ export function showPopover(
     arrowElRef?: Ref<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
-    popoverOffset?: number
+    popoverOffset?: OffsetOptions
     placement: Placement
     zIndex: number
     arrowPadding?: number

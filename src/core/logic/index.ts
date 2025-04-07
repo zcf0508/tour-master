@@ -1,4 +1,4 @@
-import type { Placement, ReferenceElement } from '@floating-ui/dom';
+import type { OffsetOptions, Placement, ReferenceElement } from '@floating-ui/dom';
 import type { HookCallback } from 'hookable';
 import type { StageDefinition } from '../renderer/overlay';
 import type { PopoverArrowPositionedHandler } from '../renderer/popover';
@@ -14,7 +14,7 @@ interface TourStep {
   placement?: Placement
   /** default: false */
   hideOverlay?: boolean
-  offset?: number
+  offset?: OffsetOptions
   padding?: number
   arrowPadding?: number
 }
@@ -34,7 +34,7 @@ interface TourConfig<T = undefined> {
   steps: Array<TourStep & T>
   popoverTemplate: PopoverTemplate<T>
   popoverArrowPositioned?: PopoverArrowPositionedHandler
-  popoverOffset?: number
+  popoverOffset?: OffsetOptions
   popoverPadding?: number
   zIndex?: number
   overlayOpacity?: number

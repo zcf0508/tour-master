@@ -1,4 +1,4 @@
-import type { Placement, ReferenceElement } from '@floating-ui/dom';
+import type { OffsetOptions, Placement, ReferenceElement } from '@floating-ui/dom';
 import type { MaybeRef, Ref } from '@vue/reactivity';
 import type { StageDefinition } from './overlay';
 import type { PopoverArrowPositionedHandler } from './popover';
@@ -15,7 +15,7 @@ export async function showStep(
     arrowElRef?: Ref<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
-    popoverOffset?: number
+    popoverOffset?: OffsetOptions
     overlayOpacity: number
     placement: Placement
     zIndex: number
