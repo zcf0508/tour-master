@@ -1,5 +1,5 @@
 import type { MiddlewareData, OffsetOptions, Placement, ReferenceElement } from '@floating-ui/dom';
-import type { MaybeRef, Ref } from '@vue/reactivity';
+import type { MaybeSignal, Signal } from '../../utils';
 import {
   arrow,
   autoUpdate,
@@ -8,7 +8,7 @@ import {
   offset,
   shift,
 } from '@floating-ui/dom';
-import { unref } from '@vue/reactivity';
+import { unsignal } from '../../utils';
 
 export type PopoverArrowPositionedHandler = (
   arrowEl: HTMLElement,
@@ -28,11 +28,11 @@ function centerPopover(popoverEl: HTMLElement): void {
 }
 
 function updatePosition(
-  referenceEl: MaybeRef<ReferenceElement | undefined>,
-  popoverEl: MaybeRef<HTMLElement>,
+  referenceEl: MaybeSignal<ReferenceElement | undefined>,
+  popoverEl: MaybeSignal<HTMLElement>,
   options?: Partial<{
     placement?: Placement
-    arrowElRef?: Ref<HTMLElement | undefined>
+    arrowElRef?: MaybeSignal<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
     popoverOffset?: OffsetOptions
@@ -48,13 +48,13 @@ function updatePosition(
     arrowPadding,
   } = options ?? {};
 
-  const unrefedReferenceEl = unref(referenceEl);
-  const unrefedPopoverEl = unref(popoverEl);
+  const unrefedReferenceEl = unsignal(referenceEl);
+  const unrefedPopoverEl = unsignal(popoverEl);
 
   if (!unrefedReferenceEl) {
-    centerPopover(unrefedPopoverEl);
-    if (unref(arrowElRef)) {
-      Object.assign(unref(arrowElRef)!.style, {
+    centerPopover(unrefedPopoverEl!);
+    if (unsignal(arrowElRef)) {
+      Object.assign(unsignal(arrowElRef)!.style, {
         display: 'none',
       });
     }
@@ -71,10 +71,10 @@ function updatePosition(
         shift({ padding: popoverPadding }),
         offset(popoverOffset),
         ...(
-          unref(arrowElRef)
+          unsignal(arrowElRef)
             ? [
               arrow({
-                element: unref(arrowElRef)!,
+                element: unsignal(arrowElRef)!,
                 padding: arrowPadding,
               }),
             ]
@@ -89,20 +89,20 @@ function updatePosition(
       top: `${y}px`,
     });
 
-    if (middlewareData.arrow && unref(arrowElRef)) {
-      Object.assign(unref(arrowElRef)!.style, {
+    if (middlewareData.arrow && unsignal(arrowElRef)) {
+      Object.assign(unsignal(arrowElRef)!.style, {
         display: '',
       });
-      popoverArrowPositioned?.(unref(arrowElRef)!, placement, middlewareData.arrow);
+      popoverArrowPositioned?.(unsignal(arrowElRef)!, placement, middlewareData.arrow);
     }
   });
 }
 
 export function showPopover(
-  referenceEl: MaybeRef<ReferenceElement | undefined>,
-  createPopoverEl: () => MaybeRef<HTMLElement>,
+  referenceEl: MaybeSignal<ReferenceElement | undefined>,
+  createPopoverEl: () => MaybeSignal<HTMLElement>,
   options?: Partial<{
-    arrowElRef?: Ref<HTMLElement | undefined>
+    arrowElRef?: Signal<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
     popoverOffset?: OffsetOptions
@@ -122,19 +122,19 @@ export function showPopover(
 
   const popoverEl = createPopoverEl();
 
-  Object.assign(unref(popoverEl).style, {
+  Object.assign(unsignal(popoverEl).style, {
     zIndex: options?.zIndex !== undefined
       ? String(options.zIndex)
       : undefined,
   });
 
-  const unrefedReferenceEl = unref(referenceEl);
+  const unrefedReferenceEl = unsignal(referenceEl);
   let cleanup: () => void;
 
   if (unrefedReferenceEl) {
     cleanup = autoUpdate(
       unrefedReferenceEl,
-      unref(popoverEl),
+      unsignal(popoverEl),
       () => updatePosition(referenceEl, popoverEl, {
         arrowElRef,
         placement,
@@ -146,7 +146,7 @@ export function showPopover(
     );
   }
   else {
-    updatePosition(undefined, popoverEl, {
+    updatePosition(() => undefined, popoverEl, {
       arrowElRef,
     });
     cleanup = () => {};
@@ -154,14 +154,14 @@ export function showPopover(
 
   function destory(): void {
     cleanup();
-    unref(popoverEl).remove();
+    unsignal(popoverEl).remove();
     if (arrowElRef) {
-      arrowElRef.value = undefined;
+      arrowElRef(undefined);
     }
   }
 
   return [
-    unref(popoverEl),
+    unsignal(popoverEl),
     destory,
   ];
 }

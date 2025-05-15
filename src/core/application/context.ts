@@ -1,5 +1,4 @@
-import type { ShallowRef } from '@vue/reactivity';
-import { shallowRef } from '@vue/reactivity';
+import { signal } from 'alien-signals';
 
 export function createContext<
   CT extends object = object,
@@ -9,34 +8,34 @@ export function createContext<
   set: <K extends keyof CT, V extends CT[K]>(key: K, value: V) => () => void
   get: <K extends keyof CT>(key: K) => (CT[K] | undefined)
 } {
-  const ctx = shallowRef<CT>(initialContext || {} as CT) as ShallowRef<Partial<CT>>;
+  const ctx = signal<CT>(initialContext || {} as CT);
 
   return {
     set: (key, value) => {
-      ctx.value = {
-        ...ctx.value,
+      ctx({
+        ...ctx(),
         [key]: value,
-      };
+      });
       return () => {
-        ctx.value = {
-          ...ctx.value,
+        ctx({
+          ...ctx(),
           [key]: undefined,
-        };
+        });
       };
     },
     cleanup: (key) => {
       if (key) {
-        ctx.value = {
-          ...ctx.value,
+        ctx({
+          ...ctx(),
           [key]: undefined,
-        };
+        });
       }
       else {
-        ctx.value = {};
+        ctx({} as CT);
       }
     },
     get: (key) => {
-      return ctx.value[key];
+      return ctx()[key];
     },
   };
 }

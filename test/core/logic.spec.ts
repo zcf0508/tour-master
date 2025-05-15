@@ -1,8 +1,7 @@
 import type { PopoverTemplate } from '../../src/core/logic';
-import { toValue } from '@vue/reactivity';
-import { createDebugger } from 'hookable';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Tour } from '../../src/core/logic';
+import { toValue } from '../../src/utils';
 
 vi.mock('../../src/core/renderer/overlay', async (importOriginal) => {
   const mod = await importOriginal<object>();

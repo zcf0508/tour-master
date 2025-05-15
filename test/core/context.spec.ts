@@ -1,5 +1,5 @@
-import type { Ref } from '@vue/reactivity';
-import { ref } from '@vue/reactivity';
+import type { Signal } from '../../src';
+import { signal } from 'alien-signals';
 import { describe, expect, it } from 'vitest';
 import { createContext } from '../../src/core/application/context';
 
@@ -97,13 +97,13 @@ describe('createContext', () => {
 
   it('应该正确处理复杂对象类型', () => {
     interface ComplexContext {
-      user: Ref<{ name: string, age: number }>
+      user: Signal<{ name: string, age: number }>
       settings: { theme: string, notifications: boolean }
     }
 
     const context = createContext<ComplexContext>();
 
-    const user = ref({ name: '张三', age: 30 });
+    const user = signal({ name: '张三', age: 30 });
     const settings = { theme: 'dark', notifications: true };
 
     context.set('user', user);
@@ -112,8 +112,8 @@ describe('createContext', () => {
     expect(context.get('user') === user).toBe(true);
     expect(context.get('settings')).toEqual(settings);
 
-    user.value.age = 31;
-    expect(context.get('user')?.value.age).toBe(31);
+    user().age = 31;
+    expect(context.get('user')?.().age).toBe(31);
   });
 
   it('应该能够更新已存在的值', () => {

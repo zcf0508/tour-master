@@ -1,14 +1,14 @@
-import type { Ref } from '@vue/reactivity';
 import type { StageDefinition } from '../../../src/core/renderer/overlay';
 import type { showPopover } from '../../../src/core/renderer/popover';
-import { ref } from '@vue/reactivity';
+import type { Signal } from '../../../src/utils';
+import { signal } from 'alien-signals';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { showStep } from '../../../src';
 
 let store = {
-  overlayDom: ref<SVGSVGElement>(),
-  currentStages: ref<StageDefinition[] | (() => StageDefinition[])>(),
-  popoverContext: ref<ReturnType<typeof showPopover>>(),
+  overlayDom: signal<SVGSVGElement>(),
+  currentStages: signal<StageDefinition[] | (() => StageDefinition[])>(),
+  popoverContext: signal<ReturnType<typeof showPopover>>(),
 };
 
 const mockUseGlobalState = vi.hoisted(() => vi.fn());
@@ -43,9 +43,9 @@ describe('step', () => {
     vi.useRealTimers();
 
     store = {
-      overlayDom: ref<SVGSVGElement>(),
-      currentStages: ref<StageDefinition[] | (() => StageDefinition[])>(),
-      popoverContext: ref<ReturnType<typeof showPopover>>(),
+      overlayDom: signal<SVGSVGElement>(),
+      currentStages: signal<StageDefinition[] | (() => StageDefinition[])>(),
+      popoverContext: signal<ReturnType<typeof showPopover>>(),
     };
 
     mockUseGlobalState.mockReturnValue(store);
@@ -89,9 +89,9 @@ describe('step', () => {
 
     // 验证结果
     const state = mockUseGlobalState();
-    expect(state.popoverContext.value).toBeDefined();
-    expect(state.popoverContext.value?.[0]).toBe(mockPopoverEl);
-    expect(state.overlayDom.value).toBe(mockOverlaySvg);
+    expect(state.popoverContext()).toBeDefined();
+    expect(state.popoverContext()?.[0]).toBe(mockPopoverEl);
+    expect(state.overlayDom()).toBe(mockOverlaySvg);
     expect(mockShowPopover).toHaveBeenCalled();
     expect(mockCreateOverlaySvg).toHaveBeenCalledWith(
       stages,
@@ -104,7 +104,7 @@ describe('step', () => {
 
     // 测试销毁函数
     destroyOverlay();
-    expect(state.overlayDom.value).toBeUndefined();
+    expect(state.overlayDom()).toBeUndefined();
 
     destroyPopover();
     expect(mockShowPopover).toHaveBeenCalled();
@@ -135,7 +135,7 @@ describe('step', () => {
 
     const createPopoverEl = (): HTMLDivElement => mockPopoverEl;
     // 使用ref创建arrowElRef
-    const mockArrowElRef = { value: mockArrowEl } as unknown as Ref<HTMLElement | undefined>;
+    const mockArrowElRef = { value: mockArrowEl } as unknown as Signal<HTMLElement | undefined>;
     const mockPopoverArrowPositioned = vi.fn();
 
     // 调用showStep，使用自定义选项
@@ -201,7 +201,7 @@ describe('step', () => {
     // 设置初始overlay
     const state = mockUseGlobalState();
     const initialOverlay = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as SVGSVGElement;
-    state.overlayDom.value = initialOverlay;
+    state.overlayDom(initialOverlay);
 
     // 模拟remove方法
     const removeMock = vi.fn();
@@ -219,7 +219,7 @@ describe('step', () => {
 
     // 验证结果
     expect(removeMock).toHaveBeenCalled();
-    expect(state.overlayDom.value).toBeUndefined();
+    expect(state.overlayDom()).toBeUndefined();
     expect(mockCreateOverlaySvg).not.toHaveBeenCalled();
     expect(mockShowPopover).toHaveBeenCalled();
   });
@@ -245,7 +245,7 @@ describe('step', () => {
 
     // 设置初始overlay
     const state = mockUseGlobalState();
-    state.overlayDom.value = document.createElementNS('http://www.w3.org/2000/svg', 'svg') as SVGSVGElement;
+    state.overlayDom(document.createElementNS('http://www.w3.org/2000/svg', 'svg') as SVGSVGElement);
 
     // 调用showStep
     await showStep(
@@ -290,7 +290,7 @@ describe('step', () => {
     // 设置初始popoverContext
     const state = mockUseGlobalState();
     const destroyPrevPopover = vi.fn();
-    state.popoverContext.value = [document.createElement('div'), destroyPrevPopover];
+    state.popoverContext([document.createElement('div'), destroyPrevPopover]);
 
     const createPopoverEl = (): HTMLDivElement => mockPopoverEl;
 

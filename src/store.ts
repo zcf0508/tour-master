@@ -1,12 +1,12 @@
 import type { StageDefinition } from './core/renderer/overlay';
 import type { showPopover } from './core/renderer/popover';
-import { ref } from '@vue/reactivity';
-import { createGlobalState } from '@vueuse/shared';
+import { signal } from 'alien-signals';
 import { refreshOverlay } from './core/renderer/overlay';
+import { createGlobalState } from './utils';
 
 const createStore = createGlobalState(() => {
-  const overlayDom = ref<SVGSVGElement>();
-  const currentStages = ref<StageDefinition[] | (() => StageDefinition[])>();
+  const overlayDom = signal<SVGSVGElement>();
+  const currentStages = signal<StageDefinition[] | (() => StageDefinition[])>();
 
   window.addEventListener('resize', () => {
     refreshOverlay();
@@ -16,7 +16,7 @@ const createStore = createGlobalState(() => {
     refreshOverlay();
   });
 
-  const popoverContext = ref<ReturnType<typeof showPopover>>();
+  const popoverContext = signal<ReturnType<typeof showPopover>>();
 
   return {
     overlayDom,

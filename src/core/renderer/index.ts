@@ -1,18 +1,18 @@
 import type { OffsetOptions, Placement, ReferenceElement } from '@floating-ui/dom';
-import type { MaybeRef, Ref } from '@vue/reactivity';
+import type { MaybeSignal, Signal } from '../../utils';
 import type { StageDefinition } from './overlay';
 import type { PopoverArrowPositionedHandler } from './popover';
-import { toValue } from '@vue/reactivity';
 import { useGlobalState } from '../../store';
+import { toValue } from '../../utils';
 import { createOverlaySvg, transitionStage } from './overlay';
 import { showPopover } from './popover';
 
 export async function showStep(
-  createPopoverEl: () => MaybeRef<HTMLElement>,
+  createPopoverEl: () => MaybeSignal<HTMLElement>,
   element?: ReferenceElement | (() => ReferenceElement),
   stages?: StageDefinition[] | (() => StageDefinition[]),
   options?: Partial<{
-    arrowElRef?: Ref<HTMLElement | undefined>
+    arrowElRef?: Signal<HTMLElement | undefined>
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
     popoverOffset?: OffsetOptions
@@ -40,8 +40,8 @@ export async function showStep(
 
   // ---
 
-  if (state.popoverContext.value) {
-    state.popoverContext.value[1]();
+  if (state.popoverContext()) {
+    state.popoverContext()![1]();
   }
 
   const stagesVal = toValue(stages);
@@ -74,20 +74,20 @@ export async function showStep(
     },
   );
 
-  state.popoverContext.value = [popoverEl, destoryPopover];
+  state.popoverContext([popoverEl, destoryPopover]);
 
   // ---
 
   const destoryOverlay: () => void = () => {
-    state.overlayDom.value?.remove();
-    state.overlayDom.value = undefined;
+    state.overlayDom()?.remove();
+    state.overlayDom(undefined);
   };
 
   if (hideOverlay) {
     destoryOverlay();
   }
   else {
-    if (!state.overlayDom.value) {
+    if (!state.overlayDom()) {
       const overlaySvg = createOverlaySvg(
         stages || [],
         {
@@ -100,7 +100,7 @@ export async function showStep(
 
       document.body.appendChild(overlaySvg);
 
-      state.overlayDom.value = overlaySvg;
+      state.overlayDom(overlaySvg);
     }
     else {
       await transitionStage(

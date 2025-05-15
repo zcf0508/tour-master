@@ -1,6 +1,6 @@
-import type { MaybeRefOrGetter } from '@vue/reactivity';
+import type { MaybeRefOrGetter } from '../../utils';
 import type { Tour } from '../logic';
-import { toValue } from '@vue/reactivity';
+import { toValue } from '../../utils';
 import { createContext } from './context';
 
 interface TourSchedulerConfig<T = string, CT = object> {

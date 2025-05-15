@@ -2,8 +2,8 @@
  * Inspired by https://github.com/kamranahmedse/driver.js/blob/1.3.4/src/overlay.ts
  */
 
-import { toValue } from '@vue/reactivity';
 import { useGlobalState } from '../../store';
+import { toValue } from '../../utils';
 
 export interface StageDefinition {
   x: number
@@ -88,7 +88,7 @@ export function createOverlaySvg(
     );
   };
 
-  state.currentStages.value = processedStages;
+  state.currentStages(processedStages);
 
   const windowX = window.innerWidth;
   const windowY = window.innerHeight;
@@ -132,18 +132,18 @@ export function createOverlaySvg(
 
 export function refreshOverlay(): void {
   const state = useGlobalState();
-  if (state.overlayDom.value) {
-    const overlaySvg = state.overlayDom.value;
+  if (state.overlayDom()) {
+    const overlaySvg = state.overlayDom()!;
 
     const windowX = window.innerWidth;
     const windowY = window.innerHeight;
 
     overlaySvg.setAttribute('viewBox', `0 0 ${windowX} ${windowY}`);
 
-    if (state.currentStages.value) {
+    if (state.currentStages()) {
       overlaySvg.children[0].setAttribute(
         'd',
-        generateStageSvgPathString(toValue(state.currentStages.value)),
+        generateStageSvgPathString(toValue(state.currentStages()!)),
       );
     }
   }
@@ -220,13 +220,13 @@ export function transitionStage(
 ): Promise<void> {
   return new Promise((resolve) => {
     const state = useGlobalState();
-    if (!state.overlayDom.value || !state.currentStages.value) {
+    if (!state.overlayDom() || !state.currentStages()) {
       resolve();
       return;
     }
 
-    const startStages = state.currentStages.value;
-    const overlaySvg = state.overlayDom.value;
+    const startStages = state.currentStages()!;
+    const overlaySvg = state.overlayDom()!;
     const duration = 300; // Animation duration in milliseconds
     const startTime = performance.now();
 
@@ -260,7 +260,7 @@ export function transitionStage(
         requestAnimationFrame(animate);
       }
       else {
-        state.currentStages.value = processedNewStages;
+        state.currentStages(processedNewStages);
         resolve();
       }
     }

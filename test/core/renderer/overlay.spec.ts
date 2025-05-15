@@ -1,7 +1,7 @@
-import { toValue } from '@vue/reactivity';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { createOverlaySvg, transitionStage } from '../../../src/core/renderer/overlay';
 import { useGlobalState } from '../../../src/store';
+import { toValue } from '../../../src/utils';
 
 describe('overlay', () => {
   beforeEach(() => {
@@ -73,7 +73,7 @@ describe('overlay', () => {
 
     createOverlaySvg(test1Stage);
 
-    expect(toValue(state.currentStages.value)).toEqual([{
+    expect(toValue(state.currentStages())).toEqual([{
       x: 0,
       y: 0,
       width: 100,
@@ -96,7 +96,7 @@ describe('overlay', () => {
       stageRadius: 4,
     });
 
-    expect(toValue(state.currentStages.value)).toEqual([{
+    expect(toValue(state.currentStages())).toEqual([{
       x: 20,
       y: 30,
       width: 100,
@@ -120,7 +120,7 @@ describe('overlay', () => {
 
     document.body.appendChild(overlaySvg);
 
-    state.overlayDom.value = overlaySvg;
+    state.overlayDom(overlaySvg);
 
     expect(overlaySvg.getAttribute('viewBox')).toBe(`0 0 ${window.innerWidth} ${window.innerHeight}`);
 
@@ -145,7 +145,7 @@ describe('overlay', () => {
 
     document.body.appendChild(overlaySvg);
 
-    state.overlayDom.value = overlaySvg;
+    state.overlayDom(overlaySvg);
 
     expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M200,0L0,0L0,300L200,300L200,0ZM0,0 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 z" style="fill: rgb(0,0,0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
 
@@ -164,12 +164,12 @@ describe('overlay', () => {
       return 1;
     });
 
-    state.currentStages.value = [{
+    state.currentStages([{
       x: 0,
       y: 0,
       width: 100,
       height: 100,
-    }];
+    }]);
 
     // Start transition
     const transitionPromise = transitionStage(

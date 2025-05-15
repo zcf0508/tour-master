@@ -6,6 +6,6 @@ export default defineBuildConfig({
   ],
   clean: true,
   declaration: 'node16',
-  externals: ['@vue/reactivity', '@floating-ui/dom', '@vueuse/shared'],
+  externals: ['@floating-ui/dom'],
   failOnWarn: false,
 });

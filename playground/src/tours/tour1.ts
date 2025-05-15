@@ -1,6 +1,5 @@
-import { toValue } from '@vue/reactivity';
 import { tourScheduler } from '..';
-import { Tour } from '../../../src';
+import { Tour, toValue } from '../../../src';
 
 export default function (): Tour<{ message: string | (() => string) }> {
   const step11 = document.getElementById('step_1_1')!;

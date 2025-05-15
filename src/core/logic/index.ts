@@ -2,8 +2,9 @@ import type { OffsetOptions, Placement, ReferenceElement } from '@floating-ui/do
 import type { HookCallback } from 'hookable';
 import type { StageDefinition } from '../renderer/overlay';
 import type { PopoverArrowPositionedHandler } from '../renderer/popover';
-import { ref, toValue } from '@vue/reactivity';
+import { signal } from 'alien-signals';
 import { Hookable } from 'hookable';
+import { toValue } from '../../utils';
 import { showStep } from '../renderer';
 
 interface TourStep {
@@ -146,7 +147,7 @@ export class Tour<T extends object | undefined> extends Hookable<{
       return;
     }
 
-    const arrowElRef = ref<HTMLElement>();
+    const arrowElRef = signal<HTMLElement>();
 
     const [destoryOverlay, destoryPopover] = await showStep(
       () => {
@@ -164,7 +165,7 @@ export class Tour<T extends object | undefined> extends Hookable<{
           stepTotal,
         });
         return createPopoverEl((arrowEl: HTMLElement) => {
-          arrowElRef.value = arrowEl;
+          arrowElRef(arrowEl);
         });
       },
       referenceEl,

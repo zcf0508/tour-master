@@ -1,4 +1,3 @@
-import type { MaybeRefOrGetter } from '@vue/reactivity';
 import type { Tour } from '../../src/core/logic';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { TourScheduler } from '../../src/core/application';
