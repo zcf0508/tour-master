@@ -34,6 +34,7 @@ export default function (): Tour<{ message: string | (() => string) }> {
               y: rect.y,
               width: rect.width + 20,
               height: rect.height,
+              padding: 0,
             }];
           },
           message: () => {

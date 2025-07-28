@@ -240,6 +240,9 @@ export function transitionStage(
       );
     };
 
+    const fromStages = toValue(startStages);
+    const toStages = toValue(processedNewStages);
+
     function animate(currentTime: number): void {
       const elapsed = currentTime - startTime;
       const progress = Math.min(elapsed / duration, 1);
@@ -249,7 +252,7 @@ export function transitionStage(
         ? 4 * progress * progress * progress
         : 1 - (-2 * progress + 2) ** 3 / 2;
 
-      const interpolatedStages = interpolateStages(toValue(startStages), toValue(processedNewStages), eased);
+      const interpolatedStages = interpolateStages(fromStages, toStages, eased);
 
       overlaySvg.children[0].setAttribute(
         'd',
