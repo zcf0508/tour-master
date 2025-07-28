@@ -149,6 +149,7 @@ describe('step', () => {
         popoverPadding: 10,
         popoverOffset: 5,
         overlayOpacity: 0.5,
+        overlayPadding: 3.5,
         placement: 'top',
         zIndex: 5000,
       },
@@ -171,7 +172,7 @@ describe('step', () => {
     expect(mockCreateOverlaySvg).toHaveBeenCalledWith(
       stages,
       expect.objectContaining({
-        stagePadding: 4,
+        stagePadding: 3.5,
         stageRadius: 4,
         zIndex: 5000,
         overlayOpacity: 0.5,

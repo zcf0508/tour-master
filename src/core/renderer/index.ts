@@ -16,6 +16,8 @@ export async function showStep(
     popoverArrowPositioned?: PopoverArrowPositionedHandler
     popoverPadding?: number
     popoverOffset?: OffsetOptions
+    overlayPadding?: number
+    overlayRadius?: number
     overlayOpacity: number
     placement: Placement
     zIndex: number
@@ -91,8 +93,8 @@ export async function showStep(
       const overlaySvg = createOverlaySvg(
         stages || [],
         {
-          stagePadding: 4,
-          stageRadius: 4,
+          stagePadding: options?.overlayPadding ?? 4,
+          stageRadius: options?.overlayRadius ?? 4,
           zIndex,
           overlayOpacity,
         },
@@ -106,8 +108,8 @@ export async function showStep(
       await transitionStage(
         stages || [],
         {
-          stagePadding: 4,
-          stageRadius: 4,
+          stagePadding: options?.overlayPadding ?? 4,
+          stageRadius: options?.overlayRadius ?? 4,
         },
       );
     }

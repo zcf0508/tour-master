@@ -17,6 +17,8 @@ export interface TourStep {
   hideOverlay?: boolean
   offset?: OffsetOptions
   padding?: number
+  overlayPadding?: number
+  overlayRadius?: number
   arrowPadding?: number
 }
 
@@ -38,6 +40,8 @@ interface TourConfig<T = undefined> {
   popoverOffset?: OffsetOptions
   popoverPadding?: number
   zIndex?: number
+  overlayPadding?: number
+  overlayRadius?: number
   overlayOpacity?: number
   arrowPadding?: number
   /**
@@ -187,6 +191,8 @@ export class Tour<T extends object | undefined> extends Hookable<{
         popoverArrowPositioned: this.config.popoverArrowPositioned,
         popoverOffset: this.currentStep?.offset ?? this.config.popoverOffset,
         popoverPadding: this.currentStep?.padding ?? this.config.popoverPadding,
+        overlayPadding: this.currentStep?.overlayPadding ?? this.config.overlayPadding,
+        overlayRadius: this.currentStep?.overlayRadius ?? this.config.overlayRadius,
         placement: this.currentStep.placement,
         zIndex: this.config.zIndex,
         overlayOpacity: this.config.overlayOpacity,
