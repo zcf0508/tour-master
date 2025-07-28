@@ -69,7 +69,7 @@ export async function showStep(
       popoverOffset,
       popoverPadding,
       placement,
-      zIndex: zIndex + 1,
+      zIndex: zIndex + 10,
       arrowPadding,
     },
   );

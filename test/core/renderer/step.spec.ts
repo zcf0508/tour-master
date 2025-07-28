@@ -164,7 +164,7 @@ describe('step', () => {
         popoverPadding: 10,
         popoverOffset: 5,
         placement: 'top',
-        zIndex: 5001,
+        zIndex: 5010,
       }),
     );
 
