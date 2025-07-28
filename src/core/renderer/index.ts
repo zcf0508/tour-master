@@ -46,13 +46,11 @@ export async function showStep(
     state.popoverContext()![1]();
   }
 
-  const stagesVal = toValue(stages);
-
   const [popoverEl, destoryPopover] = showPopover(
-    toValue(element) ?? (stagesVal?.length
+    toValue(element) ?? (toValue(stages)?.length
       ? {
         getBoundingClientRect: () => {
-          const stage = stagesVal[0]!;
+          const stage = toValue(stages)![0];
 
           return {
             ...stage,
