@@ -7,7 +7,7 @@ import { Hookable } from 'hookable';
 import { toValue } from '../../utils';
 import { showStep } from '../renderer';
 
-interface TourStep {
+export interface TourStep {
   element?: string | ReferenceElement | (() => ReferenceElement)
   stages?: StageDefinition[] | (() => StageDefinition[])
   entry?: (action: 'pre' | 'next') => void | Promise<void>
