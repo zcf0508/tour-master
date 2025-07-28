@@ -60,7 +60,9 @@ jobs:
         run: npm i -g pnpm@9
 
       - name: Install
-        run: pnpm i
+        run: |
+          pnpm i
+          pnpx playwright install chromium
 
       - name: Test
         run: pnpm run test

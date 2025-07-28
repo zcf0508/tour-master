@@ -19,7 +19,7 @@ describe('overlay', () => {
       }],
     );
 
-    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M1024,0L0,0L0,768L1024,768L1024,0ZM0,0 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 z" style="fill: rgb(0,0,0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
+    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M414,0L0,0L0,896L414,896L414,0ZM0,0 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 z" style="fill: rgb(0, 0, 0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
 
     expect(overlaySvg.style.zIndex).toBe('10000');
   });
@@ -58,7 +58,7 @@ describe('overlay', () => {
       ],
     );
 
-    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M1024,0L0,0L0,768L1024,768L1024,0ZM0,0 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 zM100,100 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 z" style="fill: rgb(0,0,0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
+    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M414,0L0,0L0,896L414,896L414,0ZM0,0 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 zM100,100 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 z" style="fill: rgb(0, 0, 0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
   });
 
   it('global state', () => {
@@ -147,7 +147,7 @@ describe('overlay', () => {
 
     state.overlayDom(overlaySvg);
 
-    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M200,0L0,0L0,300L200,300L200,0ZM0,0 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 z" style="fill: rgb(0,0,0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
+    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M200,0L0,0L0,300L200,300L200,0ZM0,0 h100 a0,0 0 0 1 0,0 v100 a0,0 0 0 1 -0,0 h-100 a0,0 0 0 1 -0,-0 v-100 a0,0 0 0 1 0,-0 z" style="fill: rgb(0, 0, 0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
 
     // ---
 
@@ -205,7 +205,7 @@ describe('overlay', () => {
 
     await transitionPromise;
 
-    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M200,0L0,0L0,300L200,300L200,0ZM20,26 h100 a4,4 0 0 1 4,4 v100 a4,4 0 0 1 -4,4 h-100 a4,4 0 0 1 -4,-4 v-100 a4,4 0 0 1 4,-4 zM60,76 h20 a4,4 0 0 1 4,4 v30 a4,4 0 0 1 -4,4 h-20 a4,4 0 0 1 -4,-4 v-30 a4,4 0 0 1 4,-4 z" style="fill: rgb(0,0,0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
+    expect(overlaySvg.innerHTML).toMatchInlineSnapshot('"<path d="M200,0L0,0L0,300L200,300L200,0ZM20,26 h100 a4,4 0 0 1 4,4 v100 a4,4 0 0 1 -4,4 h-100 a4,4 0 0 1 -4,-4 v-100 a4,4 0 0 1 4,-4 zM60,76 h20 a4,4 0 0 1 4,4 v30 a4,4 0 0 1 -4,4 h-20 a4,4 0 0 1 -4,-4 v-30 a4,4 0 0 1 4,-4 z" style="fill: rgb(0, 0, 0); opacity: 0.7; pointer-events: auto; cursor: auto;"></path>"');
 
     // Cleanup
     vi.useRealTimers();

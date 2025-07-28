@@ -3,15 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { Tour } from '../../src/core/logic';
 import { toValue } from '../../src/utils';
 
-vi.mock('../../src/core/renderer/overlay', async (importOriginal) => {
-  const mod = await importOriginal<object>();
-
-  return {
-    ...mod,
-    transitionStage: vi.fn() as () => Promise<void>,
-  };
-});
-
 describe('tour', () => {
   let mockPopoverTemplate: PopoverTemplate<unknown>;
 
@@ -280,6 +271,8 @@ describe('tour', () => {
 
   it('storageKey', async () => {
     const onStart = vi.fn();
+
+    localStorage.removeItem('tour');
 
     const tour = new Tour({
       storageKey: 'tour',
