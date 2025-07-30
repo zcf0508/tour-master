@@ -25,15 +25,6 @@ describe('tour', () => {
       steps: [
         {
           element,
-          stages: () => {
-            const rect = element.getBoundingClientRect();
-            return [{
-              x: rect.x,
-              y: rect.y,
-              width: rect.width,
-              height: rect.height,
-            }];
-          },
         },
       ],
       popoverTemplate: mockPopoverTemplate,
@@ -50,15 +41,6 @@ describe('tour', () => {
       steps: [
         {
           element,
-          stages: () => {
-            const rect = toValue(element).getBoundingClientRect();
-            return [{
-              x: rect.x,
-              y: rect.y,
-              width: rect.width,
-              height: rect.height,
-            }];
-          },
         },
       ],
       popoverTemplate: mockPopoverTemplate,
@@ -78,7 +60,6 @@ describe('tour', () => {
     const tour = new Tour({
       steps: [
         {
-          element: 'step1',
           stages: () => {
             const rect = document.getElementById('step1')!.getBoundingClientRect();
             return [{
@@ -92,7 +73,6 @@ describe('tour', () => {
           leave: mockLeave1,
         },
         {
-          element: 'step2',
           stages: () => {
             const rect = document.getElementById('step2')!.getBoundingClientRect();
             return [{
@@ -133,7 +113,6 @@ describe('tour', () => {
     const tour = new Tour({
       steps: [
         {
-          element: 'step1',
           stages: () => {
             const rect = document.getElementById('step1')!.getBoundingClientRect();
             return [{
