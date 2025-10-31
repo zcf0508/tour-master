@@ -1,6 +1,7 @@
 # Tour Master
 
 [![NPM version](https://img.shields.io/npm/v/tour-master?color=a1b858&label=)](https://www.npmjs.com/package/tour-master)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/zcf0508/tour-master)
 
 A flexible and customizable tour guide library for web applications, built with TypeScript and Vue.js reactivity system.
 
