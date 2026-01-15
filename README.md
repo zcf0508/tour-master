@@ -69,6 +69,35 @@ const tour = new Tour({
 tour.start();
 ```
 
+## Driver.js Style Theme
+
+The library comes with a built-in Driver.js-like theme that you can use out of the box.
+
+```typescript
+import { createDriverjsPopover, getDriverjsArrowPositioned, Tour } from 'tour-master';
+
+const tour = new Tour({
+  steps: [
+    {
+      element: '#step1',
+      title: 'Step 1',
+      message: 'This is the first step',
+    },
+    // ...
+  ],
+  popoverTemplate: createDriverjsPopover({
+    classPrefix: 'driverjs-theme', // Optional: prefix for CSS classes to avoid conflicts
+    showProgress: true, // Optional: show step progress (1/5)
+    doneBtnText: 'Done', // Optional: text for the Done button
+    nextBtnText: 'Next', // Optional: text for the Next button
+    prevBtnText: 'Previous', // Optional: text for the Previous button
+  }),
+  popoverArrowPositioned: getDriverjsArrowPositioned(),
+});
+
+tour.start();
+```
+
 ## Configuration Options
 
 ### Tour Configuration
