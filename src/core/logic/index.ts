@@ -1,7 +1,7 @@
 import type { OffsetOptions, Placement, ReferenceElement } from '@floating-ui/dom';
 import type { HookCallback } from 'hookable';
-import type { StageDefinition } from '../renderer/overlay';
 import type { PopoverArrowPositionedHandler } from '../renderer/popover';
+import type { StageDefinition } from '../renderer/types';
 import { signal } from 'alien-signals';
 import { Hookable } from 'hookable';
 import { toValue } from '../../utils';

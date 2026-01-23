@@ -211,4 +211,196 @@ describe('overlay', () => {
     vi.useRealTimers();
     vi.restoreAllMocks();
   });
+
+  it('should use cached stages when function throws error', () => {
+    const state = useGlobalState();
+
+    // Initialize with valid stages
+    createOverlaySvg([{
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+    }]);
+
+    // Verify cache is updated
+    expect(state.cachedStages()).toEqual([{
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      padding: 0,
+      radius: 0,
+    }]);
+
+    // Create overlay with function that throws error (simulating destroyed element)
+    const overlaySvg2 = createOverlaySvg(
+      () => {
+        throw new Error('Element not found');
+      },
+      {
+        stagePadding: 10,
+        stageRadius: 10,
+      },
+    );
+
+    // Should use cached stages instead of throwing
+    expect(overlaySvg2.innerHTML).toContain('h100 a0,0'); // Dimensions from cached value
+    expect(state.cachedStages()).toEqual([{
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      padding: 0,
+      radius: 0,
+    }]);
+  });
+
+  it('should use cached stages when function returns empty array', () => {
+    const state = useGlobalState();
+
+    // Initialize with valid stages and custom padding/radius
+    createOverlaySvg([{
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 200,
+    }], {
+      stagePadding: 5,
+      stageRadius: 3,
+    });
+
+    // Cache should be updated with processed stages
+    expect(state.cachedStages()).toEqual([{
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 200,
+      padding: 5,
+      radius: 3,
+    }]);
+
+    // Create overlay with function that returns empty array
+    const overlaySvg2 = createOverlaySvg(
+      () => [],
+      {
+        stagePadding: 10,
+        stageRadius: 10,
+      },
+    );
+
+    // Should use cached stages (with original padding/radius)
+    // width: 200, padding: 5, radius: 3 => h(200+5*2-3*2) = h204
+    expect(overlaySvg2.innerHTML).toContain('h204 a3,3'); // From cache
+    expect(state.cachedStages()).toEqual([{
+      x: 50,
+      y: 50,
+      width: 200,
+      height: 200,
+      padding: 5,
+      radius: 3,
+    }]);
+  });
+
+  it('resolveStages - should update cache with successful result', () => {
+    const state = useGlobalState();
+
+    // Create initial overlay
+    createOverlaySvg([{
+      x: 10,
+      y: 20,
+      width: 150,
+      height: 150,
+    }]);
+
+    // Create another overlay with valid new stages
+    createOverlaySvg([{
+      x: 30,
+      y: 40,
+      width: 250,
+      height: 250,
+    }], {
+      stagePadding: 8,
+      stageRadius: 6,
+    });
+
+    // Cache should be updated with new stages
+    expect(state.cachedStages()).toEqual([{
+      x: 30,
+      y: 40,
+      width: 250,
+      height: 250,
+      padding: 8,
+      radius: 6,
+    }]);
+  });
+
+  it('transitionStage should handle errors gracefully', async () => {
+    const state = useGlobalState();
+
+    // Initialize overlay and cache
+    const overlaySvg = createOverlaySvg([{
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+    }]);
+
+    document.body.appendChild(overlaySvg);
+    state.overlayDom(overlaySvg);
+
+    // Mock requestAnimationFrame to simulate animation
+    const rafCallbacks: FrameRequestCallback[] = [];
+    vi.spyOn(window, 'requestAnimationFrame').mockImplementation((cb) => {
+      rafCallbacks.push(cb);
+      return rafCallbacks.length;
+    });
+
+    // Mock performance.now()
+    let now = 0;
+    vi.spyOn(performance, 'now').mockImplementation(() => now);
+
+    // Start transition with function that will throw error
+    const transitionPromise = transitionStage(
+      () => {
+        throw new Error('Element destroyed during animation');
+      },
+      {
+        stagePadding: 10,
+        stageRadius: 5,
+      },
+    );
+
+    // Simulate animation frames (should use cached value and complete)
+    // Execute first frame
+    expect(rafCallbacks.length).toBeGreaterThan(0);
+    now = 16;
+    rafCallbacks[0](now);
+
+    // Execute second frame
+    if (rafCallbacks.length > 1) {
+      now = 32;
+      rafCallbacks[1](now);
+    }
+
+    // Execute final frame to complete animation
+    const lastIndex = rafCallbacks.length - 1;
+    now = 300;
+    rafCallbacks[lastIndex](now);
+
+    await transitionPromise;
+
+    // Should use cached stages and not throw
+    expect(state.cachedStages()).toEqual([{
+      x: 0,
+      y: 0,
+      width: 100,
+      height: 100,
+      padding: 0,
+      radius: 0,
+    }]);
+
+    // Cleanup
+    vi.restoreAllMocks();
+  });
 });

@@ -1,5 +1,5 @@
-import type { StageDefinition } from '../../../src/core/renderer/overlay';
 import type { showPopover } from '../../../src/core/renderer/popover';
+import type { StageDefinition } from '../../../src/core/renderer/types';
 import type { Signal } from '../../../src/utils';
 import { signal } from 'alien-signals';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

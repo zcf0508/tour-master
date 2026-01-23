@@ -1,7 +1,7 @@
 import type { OffsetOptions, Placement, ReferenceElement } from '@floating-ui/dom';
 import type { MaybeSignal, Signal } from '../../utils';
-import type { StageDefinition } from './overlay';
 import type { PopoverArrowPositionedHandler } from './popover';
+import type { StageDefinition } from './types';
 import { useGlobalState } from '../../store';
 import { toValue } from '../../utils';
 import { createOverlaySvg, transitionStage } from './overlay';

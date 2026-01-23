@@ -2,16 +2,37 @@
  * Inspired by https://github.com/kamranahmedse/driver.js/blob/1.3.4/src/overlay.ts
  */
 
+import type { StageDefinition } from './types';
 import { useGlobalState } from '../../store';
 import { toValue } from '../../utils';
 
-export interface StageDefinition {
-  x: number
-  y: number
-  width: number
-  height: number
-  padding?: number
-  radius?: number
+/**
+ * Resolve stages from possibly dynamic source with error handling and caching.
+ * - If stages is a function, executes it and validates the result
+ * - Returns cached valid stages if execution fails or returns empty array
+ * - Updates cache when successful non-empty result is obtained
+ */
+function resolveStages(
+  stages: StageDefinition[] | (() => StageDefinition[]),
+  getCached: () => StageDefinition[],
+  setCached: (stages: StageDefinition[]) => void,
+): StageDefinition[] {
+  try {
+    const result = toValue(stages);
+
+    // If result is an empty array, return cached value
+    if (Array.isArray(result) && result.length === 0) {
+      return getCached();
+    }
+
+    // Cache and return the successful result
+    setCached(result);
+    return result;
+  }
+  catch (error) {
+    // On error, return cached value
+    return getCached();
+  }
 }
 
 function generateStageSvgPathString(stages: StageDefinition[]): string {
@@ -78,16 +99,11 @@ export function createOverlaySvg(
 
   const state = useGlobalState();
 
-  function processedStages(): StageDefinition[] {
-    return toValue(stages).map(
-      stage => ({
-        ...stage,
-        padding: stage.padding ?? stagePadding,
-        radius: stage.radius ?? stageRadius,
-      }),
-    );
-  };
+  const resolvedStages = resolveStages(stages, state.cachedStages, state.cachedStages);
+  const processedStages = applyStageOptions(resolvedStages, stagePadding, stageRadius);
 
+  // Update cache with processed stages (including padding and radius)
+  state.cachedStages(processedStages);
   state.currentStages(processedStages);
 
   const windowX = window.innerWidth;
@@ -117,7 +133,7 @@ export function createOverlaySvg(
 
   stagePath.setAttribute(
     'd',
-    generateStageSvgPathString(toValue(processedStages)),
+    generateStageSvgPathString(processedStages),
   );
 
   stagePath.style.fill = overlayColor;
@@ -141,9 +157,14 @@ export function refreshOverlay(): void {
     overlaySvg.setAttribute('viewBox', `0 0 ${windowX} ${windowY}`);
 
     if (state.currentStages()) {
+      const resolvedStages = resolveStages(
+        state.currentStages()!,
+        state.cachedStages,
+        state.cachedStages,
+      );
       overlaySvg.children[0].setAttribute(
         'd',
-        generateStageSvgPathString(toValue(state.currentStages()!)),
+        generateStageSvgPathString(resolvedStages),
       );
     }
   }
@@ -230,18 +251,9 @@ export function transitionStage(
     const duration = 300; // Animation duration in milliseconds
     const startTime = performance.now();
 
-    function processedNewStages(): StageDefinition[] {
-      return toValue(newStages).map(
-        stage => ({
-          ...stage,
-          padding: stage.padding ?? options?.stagePadding,
-          radius: stage.radius ?? options?.stageRadius,
-        }),
-      );
-    };
-
-    const fromStages = toValue(startStages);
-    const toStages = toValue(processedNewStages);
+    const fromStages = resolveStages(startStages, state.cachedStages, state.cachedStages);
+    const toStagesRaw = resolveStages(newStages, state.cachedStages, state.cachedStages);
+    const toStages = applyStageOptions(toStagesRaw, options?.stagePadding, options?.stageRadius);
 
     function animate(currentTime: number): void {
       const elapsed = currentTime - startTime;
@@ -263,11 +275,29 @@ export function transitionStage(
         requestAnimationFrame(animate);
       }
       else {
-        state.currentStages(processedNewStages);
+        state.currentStages(toStages);
+        state.cachedStages(toStages);
         resolve();
       }
     }
 
     requestAnimationFrame(animate);
   });
+}
+
+/**
+ * Apply padding and radius options to stages
+ */
+function applyStageOptions(
+  stages: StageDefinition[],
+  padding?: number,
+  radius?: number,
+): StageDefinition[] {
+  return stages.map(
+    stage => ({
+      ...stage,
+      padding: stage.padding ?? padding,
+      radius: stage.radius ?? radius,
+    }),
+  );
 }

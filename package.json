@@ -26,7 +26,7 @@
   "scripts": {
     "build": "unbuild",
     "dev": "pnpm -C playground run dev",
-    "lint": "eslint .",
+    "lint": "eslint . --quiet",
     "format": "eslint . --fix",
     "prepublishOnly": "pnpm run build",
     "release": "bumpp",
